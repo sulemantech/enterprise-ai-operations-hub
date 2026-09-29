@@ -32,6 +32,14 @@ python -m pytest                # run the checks
 fastapi dev api.py              # API docs at http://127.0.0.1:8000/docs
 ```
 
+In a second terminal, the browser page (needs Node.js 20.19+):
+
+```powershell
+cd web
+npm install
+npm run dev                     # open http://localhost:5173
+```
+
 ## How we will build it
 
 Python rules -> FastAPI -> PostgreSQL -> React -> LLM -> LangGraph -> RAG -> n8n -> complete demo.

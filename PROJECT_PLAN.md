@@ -77,7 +77,13 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Session 3: missing, unverified, insufficient-coverage and date checks; all four jobs match; 12 pytest tests pass (`python -m pytest`).
 - [x] Session 4: `GET /assessments` and `GET /assessments/{job_id}` in `api.py`; run with `fastapi dev api.py`, docs at `/docs`.
 - [x] Session 5: `GET /assessments?start=&end=` selects jobs that overlap the window; missing, malformed, reversed, or over-31-day windows return 422. **M1 complete.**
-- [x] Session 6: PostgreSQL (pgvector image) in Docker on port 5433; Alembic migration `0001` creates the tables; `seed.py` loads the four jobs. The API still reads JSON until Session 7.
-- [ ] Session 7: replace JSON loading with database reads.
+- [x] Session 6: PostgreSQL (pgvector image) in Docker on port 5433; Alembic migration `0001` creates the tables; `seed.py` loads the four jobs.
+- [x] Session 7: API reads jobs, documents and policies from PostgreSQL via `repository.py`; rules unchanged. Tests run in rolled-back transactions.
+- [x] Sessions 8–9: React page in `web/` (Vite + TypeScript) with date inputs, Check jobs, results table, loading, empty and error states. Built for the learner (fast-tracked). **M2 complete.**
+- [x] Session 10: `explain.py` asks Claude (`claude-opus-5`, structured output) to explain a rules result; `check_grounding` rejects changed status/reason or unknown IDs. About 1 cent per explanation.
+- [x] Richer demo data: `demo_data.py` generates 140 extra jobs, 30 contractors and a high-risk policy (fixed seed); `seed.py` resets the database to fixture + generated data (`--small` for the four fixture jobs only). Migration `0002` adds job title/site and contractor trade; the UI has summary filters and search.
+- [ ] Session 11: a question triggers the assessment as a validated Claude tool.
+
+Focus from here: AI integration, LangGraph, and the approval workflow. LLM provider: Claude (Anthropic API).
 
 Start with [Day 1](docs/DAY_01.md). Everything else is reference material until we reach it.
