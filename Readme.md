@@ -14,7 +14,23 @@ We use invented data inspired by the FocusIMS business domain. This is an indepe
 2. [Simple architecture](docs/architecture.md)
 3. [Step-by-step plan](PROJECT_PLAN.md)
 
-No application code has been written yet. The sample data is ready.
+## Run it locally
+
+Needs Python 3.11 and Docker Desktop. From the project folder, in PowerShell:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt -r requirements-dev.txt
+copy .env.example .env          # then set your own local password in .env
+
+docker compose up -d            # start PostgreSQL (port 5433)
+alembic upgrade head            # create the tables
+python seed.py                  # load the four demo jobs
+
+python -m pytest                # run the checks
+fastapi dev api.py              # API docs at http://127.0.0.1:8000/docs
+```
 
 ## How we will build it
 
