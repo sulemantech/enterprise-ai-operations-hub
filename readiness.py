@@ -22,13 +22,6 @@ def dates_cover_job(
     return valid_from <= job_start and valid_to >= job_end
 
 
-def job_overlaps_window(job: dict, window_start: date, window_end: date) -> bool:
-    """Return whether any day of the job falls inside the window, inclusively."""
-    job_start = date.fromisoformat(job["start_date"])
-    job_end = date.fromisoformat(job["end_date"])
-    return job_start <= window_end and job_end >= window_start
-
-
 def find_documents(
     documents: list[dict],
     contractor_id: str,
