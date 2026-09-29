@@ -73,6 +73,8 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Simple architecture and learning sequence prepared.
 - [x] Python 3.11.9 and project virtual environment verified.
 - [x] First insurance date function implemented in `readiness.py`; JOB-102 and three date boundary cases checked.
-- [ ] Walk through the function together and add the remaining document checks.
+- [x] Session 2: `assess_job` returns the expected reason for JOB-102.
+- [x] Session 3: missing, unverified, insufficient-coverage and date checks; all four jobs match; 12 pytest tests pass (`python -m pytest`).
+- [ ] Session 4: expose the assessment through a FastAPI endpoint.
 
 Start with [Day 1](docs/DAY_01.md). Everything else is reference material until we reach it.

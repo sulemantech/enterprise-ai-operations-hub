@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+# Lets tests import readiness.py from the project root.
+pythonpath = ["."]
+testpaths = ["tests"]
