@@ -4,10 +4,14 @@ No readiness rules live here, so the UI, the AI tool and n8n all get
 the same answer from the same function.
 """
 
-from fastapi import FastAPI, HTTPException
+from datetime import date
+
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
-from readiness import assess_job, load_demo
+from readiness import assess_job, job_overlaps_window, load_demo
+
+MAX_WINDOW_DAYS = 31
 
 app = FastAPI(title="Contractor readiness (demo)")
 
@@ -29,9 +33,26 @@ def health():
 
 
 @app.get("/assessments", response_model=list[Assessment])
-def get_assessments():
+def get_assessments(
+    start: date = Query(description="First day of the window, e.g. 2026-10-05"),
+    end: date = Query(description="Last day of the window, inclusive, e.g. 2026-10-11"),
+):
+    # FastAPI already rejects missing or badly formatted dates (422).
+    # These checks cover dates that are valid on their own but not together.
+    if end < start:
+        raise HTTPException(status_code=422, detail="end must be on or after start")
+    if (end - start).days + 1 > MAX_WINDOW_DAYS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"window must be at most {MAX_WINDOW_DAYS} days",
+        )
+
     demo = load_demo()
-    return [assess(job, demo) for job in demo["jobs"]]
+    return [
+        assess(job, demo)
+        for job in demo["jobs"]
+        if job_overlaps_window(job, start, end)
+    ]
 
 
 @app.get("/assessments/{job_id}", response_model=Assessment)

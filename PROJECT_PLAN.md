@@ -76,6 +76,7 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Session 2: `assess_job` returns the expected reason for JOB-102.
 - [x] Session 3: missing, unverified, insufficient-coverage and date checks; all four jobs match; 12 pytest tests pass (`python -m pytest`).
 - [x] Session 4: `GET /assessments` and `GET /assessments/{job_id}` in `api.py`; run with `fastapi dev api.py`, docs at `/docs`.
-- [ ] Session 5: explicit date inputs and clear errors for invalid requests.
+- [x] Session 5: `GET /assessments?start=&end=` selects jobs that overlap the window; missing, malformed, reversed, or over-31-day windows return 422. **M1 complete.**
+- [ ] Session 6: Docker and PostgreSQL with first migration and seed data.
 
 Start with [Day 1](docs/DAY_01.md). Everything else is reference material until we reach it.
