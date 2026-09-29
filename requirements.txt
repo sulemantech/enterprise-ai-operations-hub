@@ -3,3 +3,4 @@ sqlalchemy
 psycopg[binary]
 alembic
 python-dotenv
+anthropic
