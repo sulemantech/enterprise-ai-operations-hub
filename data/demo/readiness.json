@@ -1,0 +1,35 @@
+{
+  "synthetic": true,
+  "organisation": {"id": "ORG-DEMO", "name": "Demo Field Services"},
+  "reference_date": "2026-10-01",
+  "timezone": "Australia/Sydney",
+  "window": {"start": "2026-10-05", "end": "2026-10-11"},
+  "policy": {"id": "DEMO-CONTRACTOR-001", "version": 1, "required_types": ["insurance", "trade_licence"], "minimum_insurance_aud": 5000000},
+  "contractors": [
+    {"id": "CON-001", "name": "Demo Electrical One", "email": "one@example.invalid"},
+    {"id": "CON-002", "name": "Demo Electrical Two", "email": "two@example.invalid"},
+    {"id": "CON-003", "name": "Demo Electrical Three", "email": "three@example.invalid"},
+    {"id": "CON-004", "name": "Demo Electrical Four", "email": "four@example.invalid"}
+  ],
+  "jobs": [
+    {"id": "JOB-101", "organisation_id": "ORG-DEMO", "status": "scheduled", "contractor_ids": ["CON-001"], "start_date": "2026-10-05", "end_date": "2026-10-06", "policy_id": "DEMO-CONTRACTOR-001", "policy_version": 1},
+    {"id": "JOB-102", "organisation_id": "ORG-DEMO", "status": "scheduled", "contractor_ids": ["CON-002"], "start_date": "2026-10-06", "end_date": "2026-10-09", "policy_id": "DEMO-CONTRACTOR-001", "policy_version": 1},
+    {"id": "JOB-103", "organisation_id": "ORG-DEMO", "status": "scheduled", "contractor_ids": ["CON-003"], "start_date": "2026-10-07", "end_date": "2026-10-07", "policy_id": "DEMO-CONTRACTOR-001", "policy_version": 1},
+    {"id": "JOB-104", "organisation_id": "ORG-DEMO", "status": "scheduled", "contractor_ids": ["CON-004"], "start_date": "2026-10-08", "end_date": "2026-10-08", "policy_id": "DEMO-CONTRACTOR-001", "policy_version": 1}
+  ],
+  "documents": [
+    {"id": "DOC-001", "contractor_id": "CON-001", "type": "insurance", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-12-31", "coverage_amount": 10000000, "currency": "AUD"},
+    {"id": "DOC-002", "contractor_id": "CON-001", "type": "trade_licence", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-12-31"},
+    {"id": "DOC-003", "contractor_id": "CON-002", "type": "insurance", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-10-07", "coverage_amount": 10000000, "currency": "AUD"},
+    {"id": "DOC-004", "contractor_id": "CON-002", "type": "trade_licence", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-12-31"},
+    {"id": "DOC-005", "contractor_id": "CON-003", "type": "insurance", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-12-31", "coverage_amount": 10000000, "currency": "AUD"},
+    {"id": "DOC-006", "contractor_id": "CON-004", "type": "insurance", "review_status": "pending", "valid_from": "2026-01-01", "valid_to": "2026-12-31", "coverage_amount": 10000000, "currency": "AUD"},
+    {"id": "DOC-007", "contractor_id": "CON-004", "type": "trade_licence", "review_status": "verified", "valid_from": "2026-01-01", "valid_to": "2026-12-31"}
+  ],
+  "expected_results": [
+    {"job_id": "JOB-101", "status": "READY", "reason": "REQUIREMENTS_MET"},
+    {"job_id": "JOB-102", "status": "BLOCKED", "reason": "EXPIRES_BEFORE_JOB_END"},
+    {"job_id": "JOB-103", "status": "BLOCKED", "reason": "MISSING_DOCUMENT"},
+    {"job_id": "JOB-104", "status": "NEEDS_REVIEW", "reason": "UNVERIFIED_DOCUMENT"}
+  ]
+}
