@@ -75,6 +75,7 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] First insurance date function implemented in `readiness.py`; JOB-102 and three date boundary cases checked.
 - [x] Session 2: `assess_job` returns the expected reason for JOB-102.
 - [x] Session 3: missing, unverified, insufficient-coverage and date checks; all four jobs match; 12 pytest tests pass (`python -m pytest`).
-- [ ] Session 4: expose the assessment through a FastAPI endpoint.
+- [x] Session 4: `GET /assessments` and `GET /assessments/{job_id}` in `api.py`; run with `fastapi dev api.py`, docs at `/docs`.
+- [ ] Session 5: explicit date inputs and clear errors for invalid requests.
 
 Start with [Day 1](docs/DAY_01.md). Everything else is reference material until we reach it.
