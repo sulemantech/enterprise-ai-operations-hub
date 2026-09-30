@@ -42,28 +42,14 @@ def ask(question: str) -> None:
         if block.type =="tool_use":
             print("Tool:", block.name)
             print("Arguments:", block.input)
-            if block.name != "get_job_assessment":
-                raise ValueError(f"Unknown tool:{block.name}")
             
-            arguments = AssessmentInput.model_validate(block.input)
-            try:
-                result = get_job_assessment(arguments.job_id)
-            
-            except ValueError as error:
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "is_error": True,
-                    "content": str(error),
-                })
-            else:
-                print("Assessment:", result["status"], result["reason"])
+            outcome = execute_tool(block.name, block.input)
 
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": json.dumps(result),
-                })
+            tool_results.append({
+                "type": "tool_result",
+                "tool_use_id": block.id,
+                **outcome,
+            })
 
         elif block.type =="text":
             print(block.text)
@@ -93,5 +79,18 @@ def ask(question: str) -> None:
             if block.type == "text":
                 print("Answer:", block.text)
 
+def execute_tool(tool_name: str, tool_input: dict) -> dict:
+    try:
+        if tool_name != "get_job_assessment":
+            raise ValueError(f"Unknown tool: {tool_name}")
+
+        arguments = AssessmentInput.model_validate(tool_input)
+        result = get_job_assessment(arguments.job_id)
+
+        return {"is_error": False, "content": json.dumps(result)}
+
+    except ValueError as error:
+        return {"is_error": True, "content": str(error)}
+    
 if __name__ == "__main__":
     ask(sys.argv[1] if len(sys.argv) > 1 else "Why is JOB-102 blocked?")
