@@ -4,6 +4,8 @@
 
 Understand and build one complete local workflow: check fictional jobs, explain missing contractor evidence, approve a follow-up, and see it in a test inbox.
 
+Business focus: contractor evidence and audit preparation inspired by FocusIMS supplier management; FocusBIS consulting is a secondary potential use. Use synthetic Demo Field Services records and company procedures. No client integration or verified ISO clause mapping is included. See [questions](docs/WORKFLOW.md) and [knowledge-base design](docs/knowledge/README.md).
+
 Use 2–4 focused hours per session as a starting estimate. Repeat or split a session when needed. Progress is based on understanding and working behavior. Your actual experience and daily availability can adjust the pace.
 
 ## Phase 1: build and understand the local demo
@@ -22,7 +24,7 @@ Use 2–4 focused hours per session as a starting estimate. Repeat or split a se
 | 10 | One LLM call | Explain an existing assessment using a configured model | Explanation agrees with the actual findings |
 | 11 | A controlled AI tool | Let a question trigger the assessment tool; validate arguments in code | AI obtains facts through the same service as the UI |
 | 12 | LangGraph | Make explicit steps for question, assessment, and explanation | You can trace the inputs and output of each step |
-| 13 | RAG | Write a short fictional policy; embed, store in pgvector, and retrieve passages | An answer cites the relevant policy passage |
+| 13 | RAG | Index the synthetic contractor procedure with organisation, policy version and section metadata | JOB-102 cites CP-03 from DEMO-CONTRACTOR-001 v1; incompatible policy passages are excluded |
 | 14 | AI uncertainty | Handle no matching policy, unsupported questions, and model failures | No invented requirement or successful action is reported |
 | 15 | Follow-up proposal | Produce an editable draft for a selected finding | Exact recipient and message are visible; nothing is sent |
 | 16 | Local approval | Store the approved draft version and enforce approval on the server | Unapproved or edited drafts cannot execute |
@@ -82,8 +84,33 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Sessions 8–9: React page in `web/` (Vite + TypeScript) with date inputs, Check jobs, results table, loading, empty and error states. Built for the learner (fast-tracked). **M2 complete.**
 - [x] Session 10: `explain.py` asks Claude (`claude-opus-5`, structured output) to explain a rules result; `check_grounding` rejects changed status/reason or unknown IDs. About 1 cent per explanation.
 - [x] Richer demo data: `demo_data.py` generates 140 extra jobs, 30 contractors and a high-risk policy (fixed seed); `seed.py` resets the database to fixture + generated data (`--small` for the four fixture jobs only). Migration `0002` adds job title/site and contractor trade; the UI has summary filters and search.
-- [ ] Session 11: a question triggers the assessment as a validated Claude tool.
+- [x] Session 11: CLI tool selection, validation, assessment and explanation; missing-ID and unknown-job handling manually demonstrated.
+- [x] Session 12: LangGraph nodes and conditional routing implemented; user demonstrated JOB-102, missing-ID and unknown-job paths. These are manual checks, not comprehensive AI evaluation.
+- [ ] Session 13: source procedure prepared in `docs/knowledge/`; chunking, embeddings, pgvector retrieval and citations still to implement.
 
-Focus from here: AI integration, LangGraph, and the approval workflow. LLM provider: Claude (Anthropic API).
+Focus from here: versioned procedure retrieval, explanation evaluation and approved follow-ups. LLM provider: Claude (Anthropic API). Choose an embedding provider separately before indexing.
 
-Start with [Day 1](docs/DAY_01.md). Everything else is reference material until we reach it.
+Next: read the [knowledge-base plan](docs/knowledge/README.md) and its synthetic procedure. Day 1 remains an onboarding reference.
+
+## Next session: tomorrow — Session 13A, prepare retrieval passages
+
+Completed today:
+
+- [x] Demonstrated the three LangGraph paths: assessed job, missing job ID and unknown job.
+- [x] Selected FocusIMS contractor evidence review as the primary business context.
+- [x] Defined supported versus planned questions and the boundary between operational data and RAG sources.
+- [x] Prepared procedure document v2 (draft), including manual review responsibilities and site coordination; automated policy remains v1.
+
+Tomorrow's first task is to write a small section loader, with the learner writing code and the assistant reviewing it.
+
+1. Create `knowledge_ingest.py` with a function that reads the procedure as UTF-8.
+2. Split only at numbered CP headings, producing 12 nonempty passages, CP-01 through CP-12. Keep the heading and section text; exclude introductory and reference-history text from section bodies.
+3. Attach organisation, policy ID/version, document ID/version, source path and section ID to each passage. Preserve the draft/synthetic label and distinguish implemented checks (CP-01–06) from proposed/manual processes (CP-07–12).
+4. Print the IDs, titles and lengths for inspection. Confirm CP-03 preserves the full-job validity requirement and CP-10 does not imply site checks have been completed.
+5. Check missing-file handling, duplicate section IDs and empty sections locally, without paid model calls.
+
+Done when: the source becomes 12 traceable passages and you can explain the difference between policy version 1 and procedure document version 2.
+
+After that: select an embedding model and cost limit, create pgvector storage and ingestion, then retrieve by matching organisation/policy version and add citations. Do not call Session 13 complete until JOB-102 cites the right passage and missing/incompatible sources are handled.
+
+Deferred: PDF uploads/OCR, private client data, ISO clause mappings and automatic checks for induction, SWMS or permits. These do not block the first RAG demonstration.

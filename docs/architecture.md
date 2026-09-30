@@ -1,10 +1,25 @@
 ﻿# Simple architecture
 
-Status: learning design; application implementation has not started.
+Status: rules, database, API/browser and separate CLI LangGraph workflow implemented. JOB-102, missing-ID and unknown-job CLI paths were manually demonstrated. Retrieval, approval and delivery remain planned.
 
 ## What are we building?
 
-A manager asks which jobs have missing contractor documents, reads the reasons, and approves a follow-up to a test inbox. All records are fictional.
+A manager investigates contractor evidence in the FocusIMS supplier-management business context. The target journey connects facts, findings, procedure citations and approved follow-ups. All records are fictional; no FocusIMS or FocusBIS integration exists.
+
+## Current flow and retrieval boundary
+
+```text
+Browser -> FastAPI -> repository + readiness rules -> PostgreSQL facts
+CLI question -> LangGraph -> assessment service -> repository + readiness rules
+                         -> model explanation
+Next: matching procedure passages -> cited explanation
+```
+
+The operational database supplies assignments, dates and coverage. The planned knowledge base supplies company procedures. PostgreSQL/pgvector will store a derived search index; source Markdown stays versioned in the project. Filter passages by organisation, policy ID and exact version before semantic ranking. Missing text must be reported and cannot alter the rules result.
+
+The graph's prompts do not guarantee factual accuracy. Broader automated checks and evaluations remain needed. The current assessment returns one overall reason, not a complete audit finding register. The browser and CLI are separate entry points today.
+
+See [knowledge sources and context](knowledge/README.md) and [question scope](WORKFLOW.md).
 
 ## Start with this
 

@@ -2,9 +2,28 @@
 
 Learn to build an AI application from end to end, one working step at a time.
 
+## Business focus
+
+**Contractor Evidence and Audit Preparation Assistant**, inspired by the FocusIMS supplier-management domain. The primary user is an operations manager at a trade or maintenance business. FocusBIS consultants preparing contractor evidence for review are a secondary potential audience.
+
+The target question is: **“Why is JOB-102 blocked, which company procedure applies, and what should we request from the contractor?”**
+
+FocusIMS already describes contractor-document management. Our proposed contribution connects conversational investigation, operational facts, procedure citations and approved follow-ups. This is an independent synthetic prototype, not an official product or integration. Client value and integration compatibility remain unvalidated. See the [public-product research](docs/FOCUSIMS_RESEARCH.md).
+
+### Current capabilities
+
+- Implemented: readiness rules, PostgreSQL records, API/browser results and a separate CLI AI workflow using validated tools and LangGraph.
+- Manually demonstrated: JOB-102 explanation, missing job-ID clarification and unknown-job handling.
+- Next: versioned company-procedure retrieval and citations.
+- Planned: follow-up drafts, server-enforced approval, n8n test-inbox delivery and production controls.
+
+The CLI graph is not yet connected to the browser. Document readiness is not an ISO compliance verdict or permission to commence work.
+
+See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG context](docs/knowledge/README.md).
+
 ## Our example
 
-A manager checks four fictional jobs, sees which contractors have missing documents, and approves a follow-up message to a test inbox.
+A manager checks fictional jobs and sees which contractors have missing documents. The planned complete journey adds procedure citations and approved follow-ups to a test inbox. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
 
 We use invented data inspired by the FocusIMS business domain. This is an independent learning project; its value to that client is still unvalidated.
 
@@ -16,29 +35,35 @@ We use invented data inspired by the FocusIMS business domain. This is an indepe
 
 ## Run it locally
 
-Needs Python 3.11 and Docker Desktop. From the project folder, in PowerShell:
+Needs Python 3.11 and Docker Desktop. From the project folder, in CMD:
 
-```powershell
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt -r requirements-dev.txt
-copy .env.example .env          # then set your own local password in .env
+```cmd
+py -3.11 -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install -r requirements.txt -r requirements-dev.txt
+copy .env.example .env
 
-docker compose up -d            # start PostgreSQL (port 5433)
-alembic upgrade head            # create the tables
-python seed.py                  # load the four demo jobs
+docker compose up -d
+alembic upgrade head
+python seed.py
 
-python -m pytest                # run the checks
-fastapi dev api.py              # API docs at http://127.0.0.1:8000/docs
+python -m pytest
+fastapi dev api.py
 ```
+
+Set database credentials and the model API key in `.env`. PostgreSQL uses port 5433; API docs are at http://127.0.0.1:8000/docs. Seeding resets demo records: the default loads fixtures plus generated data; `python seed.py --small` loads only the four fixture jobs.
+
+Run the separate graph with `python readiness_graph.py "Why is JOB-102 blocked?"`. This makes paid model requests.
 
 In a second terminal, the browser page (needs Node.js 20.19+):
 
-```powershell
+```cmd
 cd web
 npm install
-npm run dev                     # open http://localhost:5173
+npm run dev
 ```
+
+Open http://localhost:5173.
 
 ## How we will build it
 

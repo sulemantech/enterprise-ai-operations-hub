@@ -2,6 +2,12 @@
 
 Reviewed: 29 September 2026. Scope: public product/module descriptions, roles, training index, client/project onboarding text, FAQ, and selected explanatory articles. This is not a complete site crawl or a hands-on product evaluation. Embedded videos, authenticated screens, real customer configurations, and API contracts have not been verified. Supplier onboarding detail could not be retrieved; the asset module was available through indexed page text after direct retrieval failed.
 
+## Selected project context
+
+The selected demonstration is contractor evidence and audit preparation, with FocusIMS supplier management as the primary context. FocusBIS consulting is a secondary possible audience. The [FocusBIS certification-services page](https://www.focusbis.com.au/services/certified/) describes custom cloud systems, procedure development, internal audit assistance and management reviews. Its homepage timed out during the follow-up review; the services page was accessible. These descriptions establish domain relevance, not a confirmed missing capability.
+
+Our next increment connects an assessed job to a versioned synthetic company procedure. See [question scope](WORKFLOW.md) and [knowledge-base sources](knowledge/README.md). Public marketing pages are research references, not the policy corpus or proof of customer requirements. No client integration has been validated.
+
 ## What the product covers
 
 FocusIMS describes an integrated platform for business operations and health, safety, environment, and quality management. Its [product overview](https://focusims.com.au/hseqsoftware/) lists nine modules. These are vendor-published capabilities, not independently tested behavior.
