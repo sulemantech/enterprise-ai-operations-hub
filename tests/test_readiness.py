@@ -91,3 +91,30 @@ def test_one_good_document_is_enough():
         "READY",
         "REQUIREMENTS_MET",
     )
+
+def test_job_without_contractors_is_blocked():
+    demo = copy.deepcopy(DEMO)
+    job = job_by_id(demo, "JOB-101")
+    job["contractor_ids"] = []
+
+    assert assess_job(job, demo["documents"], demo["policy"]) == (
+        "BLOCKED", "NO_CONTRACTOR"
+    )
+
+
+def test_unknown_insurance_amount_needs_review():
+    demo = copy.deepcopy(DEMO)
+    document_by_id(demo, "DOC-001")["coverage_amount"] = None
+
+    assert assess_job(
+        job_by_id(demo, "JOB-101"), demo["documents"], demo["policy"]
+    ) == ("NEEDS_REVIEW", "UNKNOWN_COVERAGE")
+
+
+def test_zero_insurance_amount_is_blocked():
+    demo = copy.deepcopy(DEMO)
+    document_by_id(demo, "DOC-001")["coverage_amount"] = 0
+
+    assert assess_job(
+        job_by_id(demo, "JOB-101"), demo["documents"], demo["policy"]
+    ) == ("BLOCKED", "INSUFFICIENT_COVERAGE")

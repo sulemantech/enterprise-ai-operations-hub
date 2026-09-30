@@ -48,11 +48,14 @@ def check_document(document: dict, job: dict, policy: dict) -> tuple[str, str] |
             return BLOCKED, "EXPIRES_BEFORE_JOB_END"
         return BLOCKED, "NOT_VALID_AT_JOB_START"
 
-    if (
-        document["type"] == "insurance"
-        and document.get("coverage_amount", 0) < policy["minimum_insurance_aud"]
-    ):
-        return BLOCKED, "INSUFFICIENT_COVERAGE"
+    if document["type"] == "insurance":
+        amount = document.get("coverage_amount")
+
+        if amount is None:
+            return NEEDS_REVIEW, "UNKNOWN_COVERAGE"
+
+        if amount < policy["minimum_insurance_aud"]:
+            return BLOCKED, "INSUFFICIENT_COVERAGE"
 
     # Checked last: a person can fix this by reviewing the document,
     # whereas the problems above need a new document.
@@ -66,6 +69,9 @@ def assess_job(job: dict, documents: list[dict], policy: dict) -> tuple[str, str
     """Return (status, reason) for a job, e.g. ("BLOCKED", "MISSING_DOCUMENT")."""
     problems = []
 
+    if not job["contractor_ids"]:
+        return BLOCKED, "NO_CONTRACTOR"
+    
     for contractor_id in job["contractor_ids"]:
         for required_type in policy["required_types"]:
             candidates = find_documents(documents, contractor_id, required_type)
@@ -104,3 +110,23 @@ if __name__ == "__main__":
         want = expected[job["id"]]
         mark = "ok" if (status, reason) == (want["status"], want["reason"]) else "MISMATCH"
         print(f"{job['id']}  {status:<13} {reason:<24} {mark}")
+    
+    unassigned_job = demo["jobs"][0].copy()
+    unassigned_job["contractor_ids"] = []
+
+    result = assess_job(unassigned_job, demo["documents"], demo["policy"])
+    assert result == (BLOCKED, "NO_CONTRACTOR")
+    print("No-contractor check passed.")
+
+    insurance = demo["documents"][0].copy()
+    insurance["coverage_amount"] = None
+
+    result = check_document(insurance, demo["jobs"][0], demo["policy"])
+    assert result == (NEEDS_REVIEW, "UNKNOWN_COVERAGE")
+    print("Unknown-coverage check passed.")
+
+    insurance["coverage_amount"] = 0
+
+    result = check_document(insurance, demo["jobs"][0], demo["policy"])
+    assert result == (BLOCKED, "INSUFFICIENT_COVERAGE")
+    print("Zero-coverage check passed.")

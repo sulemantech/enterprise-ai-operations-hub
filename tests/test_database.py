@@ -1,10 +1,34 @@
 """Checks that the seeded PostgreSQL data and constraints are as expected."""
 
 import pytest
+from datetime import date
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 
-from readiness import load_demo
+import repository
+from readiness import assess_job, load_demo
+
+
+def test_unassigned_job_is_returned_and_blocked(db_connection):
+    # This fixture rolls the deletion back after the test.
+    db_connection.execute(
+        text("DELETE FROM job_contractors WHERE job_id = :id"),
+        {"id": "JOB-101"},
+    )
+
+    job = repository.get_job(db_connection, "JOB-101")
+    assert job is not None
+    assert job["contractor_ids"] == []
+
+    jobs = repository.jobs_in_window(
+        db_connection, date(2026, 10, 5), date(2026, 10, 11)
+    )
+    matching_jobs = [item for item in jobs if item["id"] == "JOB-101"]
+    assert len(matching_jobs) == 1
+    assert matching_jobs[0]["contractor_ids"] == []
+
+    policy = repository.get_policy(db_connection, job["policy_id"], job["policy_version"])
+    assert assess_job(job, [], policy) == ("BLOCKED", "NO_CONTRACTOR")
 
 
 def test_fixture_jobs_are_seeded_unchanged(db_connection):

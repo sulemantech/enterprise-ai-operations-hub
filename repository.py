@@ -29,9 +29,13 @@ def _job_record(row) -> dict:
 _JOBS_SQL = """
     SELECT j.id, j.organisation_id, j.status, j.title, j.site, j.start_date, j.end_date,
            j.policy_id, j.policy_version,
-           array_agg(jc.contractor_id ORDER BY jc.contractor_id) AS contractor_ids
+           COALESCE(
+               array_agg(jc.contractor_id ORDER BY jc.contractor_id)
+                   FILTER (WHERE jc.contractor_id IS NOT NULL),
+               '{}'
+           ) AS contractor_ids
     FROM jobs j
-    JOIN job_contractors jc ON jc.job_id = j.id
+    LEFT JOIN job_contractors jc ON jc.job_id = j.id
 """
 
 
