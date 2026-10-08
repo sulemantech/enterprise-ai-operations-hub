@@ -1,6 +1,10 @@
 import json
+import time
 from pathlib import Path
-from embeddings import embed_text
+from embeddings import embed_text, EMBEDDING_MODEL
+import hashlib
+from db import get_engine
+from knowledge_repository import save_chunk
 
 def load_procedure(str_path:Path) -> str:
     with str_path.open(encoding="utf-8") as file:
@@ -81,9 +85,26 @@ def build_chunks(sections: list[dict], metadata: dict) -> list[dict]:
             "title": section["title"],
             "text": text,
             "implementation_scope": implementation_scope,
+            "content_hash": calculate_content_hash(
+                section["title"], section["text"]
+            ),
         })
     return chunks
 
+def calculate_content_hash(title: str, text: str) -> str:
+    """Return a SHA256 hash of the title and text."""
+    content = f"{title}\n\n{text}"
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+def embed_chunk(chunk: dict) -> dict:
+    """Return a new chunk dictionary with its embedding model and vector."""
+    embedding_text = f"{chunk['title']}\n\n{chunk['text']}"
+    embedded_text = embed_text(embedding_text, input_type="document")
+    return {
+        **chunk,
+        "embedding_model": EMBEDDING_MODEL,
+        "embedding": embedded_text,
+    }
 
 if __name__ == "__main__":
     procedure_path = Path(__file__).parent / "docs" / "knowledge" / "contractor_approval_procedure.md"
@@ -120,9 +141,17 @@ if __name__ == "__main__":
         print(f"Section {chunk['section_id']}: {chunk['title']} ({chunk['implementation_scope']})")
     print(json.dumps(chunks[2], indent=2, ensure_ascii=False))
 
-    embedding_text = f"{cp03['title']}\n\n{cp03['text']}"
-    vector = embed_text(embedding_text, input_type="document")
+    saved_count = 0
 
-    print("Embedded section:", cp03["section_id"])
-    print("Dimensions:", len(vector))
-    print("First five values:", vector[:5])
+    for chunk in chunks:
+        embedded_chunk = embed_chunk(chunk)
+
+        with get_engine().begin() as connection:
+            chunk_id = save_chunk(connection, embedded_chunk)
+
+        saved_count += 1
+        print(f"Saved {chunk['section_id']} with ID {chunk_id}")
+        time.sleep(25)
+    print(f"Finished: saved {saved_count} chunks.")
+
+    
