@@ -47,3 +47,30 @@ def get_draft(
     ).mappings().first()
 
     return dict(row) if row is not None else None
+
+def update_draft_text(
+    connection: Connection,
+    draft_id: int,
+    organisation_id: str,
+    subject: str,
+    body: str,
+) -> dict | None:
+    """Edit the wording of a draft that has not left the draft status."""
+    row = connection.execute(
+        text("""
+            UPDATE followup_drafts
+            SET subject = :subject, body = :body
+            WHERE id = :draft_id
+              AND organisation_id = :organisation_id
+              AND status = 'draft'
+            RETURNING *
+        """),
+        {
+            "draft_id": draft_id,
+            "organisation_id": organisation_id,
+            "subject": subject,
+            "body": body,
+        },
+    ).mappings().first()
+
+    return dict(row) if row is not None else None

@@ -86,31 +86,21 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Richer demo data: `demo_data.py` generates 140 extra jobs, 30 contractors and a high-risk policy (fixed seed); `seed.py` resets the database to fixture + generated data (`--small` for the four fixture jobs only). Migration `0002` adds job title/site and contractor trade; the UI has summary filters and search.
 - [x] Session 11: CLI tool selection, validation, assessment and explanation; missing-ID and unknown-job handling manually demonstrated.
 - [x] Session 12: LangGraph nodes and conditional routing implemented; user demonstrated JOB-102, missing-ID and unknown-job paths. These are manual checks, not comprehensive AI evaluation.
-- [ ] Session 13: source procedure prepared in `docs/knowledge/`; chunking, embeddings, pgvector retrieval and citations still to implement.
+- [x] Session 13: CP-01–CP-12 passages with organisation, policy and section metadata; embeddings in pgvector (migration `0003`); retrieval filtered by organisation and policy version; JOB-102 cites CP-03 and citations are validated against retrieved passages.
+- [x] Session 14: retrieval failure, empty results and unsupported citations fall back to the plain assessment; failed assessments skip retrieval. Checked with mocked scripts (`check_retrieval_failure.py`, `check_citation_fallback.py`), not live evaluation.
+- [x] Session 15: `followup_service.py` drafts an insurance-expiry message for a blocked job with one contractor and refuses other findings. Drafts are stored in `followup_drafts` with the evidence IDs and an assessment snapshot. `POST /assessments/{job_id}/followups`, `GET` and `PATCH /followups/{id}`; the UI shows the exact recipient and editable subject/body. Nothing is sent. `tests/test_followups.py` covers the endpoints.
 
-Focus from here: versioned procedure retrieval, explanation evaluation and approved follow-ups. LLM provider: Claude (Anthropic API). Choose an embedding provider separately before indexing.
+Focus from here: approval, then the n8n send. LLM provider: Claude (Anthropic API).
 
-Next: read the [knowledge-base plan](docs/knowledge/README.md) and its synthetic procedure. Day 1 remains an onboarding reference.
+## Next session: Session 16, local approval
 
-## Next session: tomorrow — Session 13A, prepare retrieval passages
+1. Add an approval step that stores exactly what was approved: draft ID, subject, body, recipient and when. Decide whether approval is a new row or columns on the draft.
+2. Enforce on the server: only an approved draft whose text still matches the approved version can be executed; editing after approval returns it to `draft`.
+3. Add an Approve button to the draft panel and show the approved state.
+4. Test that unapproved and edited-after-approval drafts are refused.
 
-Completed today:
+Done when: an unapproved or edited draft cannot execute, and you can explain where that rule is enforced and why it is not in the UI.
 
-- [x] Demonstrated the three LangGraph paths: assessed job, missing job ID and unknown job.
-- [x] Selected FocusIMS contractor evidence review as the primary business context.
-- [x] Defined supported versus planned questions and the boundary between operational data and RAG sources.
-- [x] Prepared procedure document v2 (draft), including manual review responsibilities and site coordination; automated policy remains v1.
-
-Tomorrow's first task is to write a small section loader, with the learner writing code and the assistant reviewing it.
-
-1. Create `knowledge_ingest.py` with a function that reads the procedure as UTF-8.
-2. Split only at numbered CP headings, producing 12 nonempty passages, CP-01 through CP-12. Keep the heading and section text; exclude introductory and reference-history text from section bodies.
-3. Attach organisation, policy ID/version, document ID/version, source path and section ID to each passage. Preserve the draft/synthetic label and distinguish implemented checks (CP-01–06) from proposed/manual processes (CP-07–12).
-4. Print the IDs, titles and lengths for inspection. Confirm CP-03 preserves the full-job validity requirement and CP-10 does not imply site checks have been completed.
-5. Check missing-file handling, duplicate section IDs and empty sections locally, without paid model calls.
-
-Done when: the source becomes 12 traceable passages and you can explain the difference between policy version 1 and procedure document version 2.
-
-After that: select an embedding model and cost limit, create pgvector storage and ingestion, then retrieve by matching organisation/policy version and add citations. Do not call Session 13 complete until JOB-102 cites the right passage and missing/incompatible sources are handled.
+Known limits: follow-ups support only `EXPIRES_BEFORE_JOB_END` with one contractor; there is no sign-in, so the API acts for `ORG-DEMO`.
 
 Deferred: PDF uploads/OCR, private client data, ISO clause mappings and automatic checks for induction, SWMS or permits. These do not block the first RAG demonstration.

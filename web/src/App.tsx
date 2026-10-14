@@ -1,5 +1,12 @@
-import { useMemo, useState, type FormEvent } from 'react'
-import { fetchAssessments, type Assessment, type Status } from './api'
+import { Fragment, useMemo, useState, type FormEvent } from 'react'
+import {
+  createFollowup,
+  fetchAssessments,
+  saveFollowup,
+  type Assessment,
+  type FollowupDraft,
+  type Status,
+} from './api'
 
 // Four weeks of the demo period (the API allows up to 31 days).
 const DEFAULT_START = '2026-10-05'
@@ -21,6 +28,10 @@ const REASON_LABELS: Record<string, string> = {
   INSUFFICIENT_COVERAGE: 'Insurance coverage is below the policy minimum',
   UNVERIFIED_DOCUMENT: 'A document has not been verified yet',
 }
+
+// The only finding the server can draft a follow-up for so far.
+const canDraftFollowup = (a: Assessment) =>
+  a.status === 'BLOCKED' && a.reason === 'EXPIRES_BEFORE_JOB_END' && a.contractors.length === 1
 
 // The screen is always in exactly one of these states.
 type View =
@@ -82,6 +93,7 @@ export default function App() {
 function Results({ assessments }: { assessments: Assessment[] }) {
   const [statusFilter, setStatusFilter] = useState<Status | null>(null)
   const [search, setSearch] = useState('')
+  const [followupJobId, setFollowupJobId] = useState<string | null>(null)
 
   const counts = useMemo(() => {
     const result: Record<Status, number> = { READY: 0, NEEDS_REVIEW: 0, BLOCKED: 0 }
@@ -153,42 +165,159 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                 <th>Contractor</th>
                 <th>Status</th>
                 <th>Reason</th>
+                <th>
+                  <span className="visually-hidden">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody>
               {visible.map((a) => (
-                <tr key={a.job_id}>
-                  <td>
-                    <div className="primary">{a.title ?? a.job_id}</div>
-                    <div className="secondary">
-                      {a.job_id}
-                      {a.site && ` · ${a.site}`}
-                      {a.policy_id.includes('HIGH-RISK') && <span className="tag">High risk</span>}
-                    </div>
-                  </td>
-                  <td className="nowrap">{formatRange(a.start_date, a.end_date)}</td>
-                  <td>
-                    {a.contractors.map((c) => (
-                      <div key={c.id}>
-                        {c.name}
-                        <span className="secondary"> · {c.id}</span>
+                <Fragment key={a.job_id}>
+                  <tr>
+                    <td>
+                      <div className="primary">{a.title ?? a.job_id}</div>
+                      <div className="secondary">
+                        {a.job_id}
+                        {a.site && ` · ${a.site}`}
+                        {a.policy_id.includes('HIGH-RISK') && <span className="tag">High risk</span>}
                       </div>
-                    ))}
-                  </td>
-                  <td>
-                    <span className={`badge ${a.status.toLowerCase()}`}>{STATUS_LABELS[a.status] ?? a.status}</span>
-                  </td>
-                  <td>
-                    {REASON_LABELS[a.reason] ?? a.reason}
-                    <code>{a.reason}</code>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="nowrap">{formatRange(a.start_date, a.end_date)}</td>
+                    <td>
+                      {a.contractors.map((c) => (
+                        <div key={c.id}>
+                          {c.name}
+                          <span className="secondary"> · {c.id}</span>
+                        </div>
+                      ))}
+                    </td>
+                    <td>
+                      <span className={`badge ${a.status.toLowerCase()}`}>{STATUS_LABELS[a.status] ?? a.status}</span>
+                    </td>
+                    <td>
+                      {REASON_LABELS[a.reason] ?? a.reason}
+                      <code>{a.reason}</code>
+                    </td>
+                    <td>
+                      {canDraftFollowup(a) && (
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          aria-expanded={followupJobId === a.job_id}
+                          onClick={() => setFollowupJobId(followupJobId === a.job_id ? null : a.job_id)}
+                        >
+                          {followupJobId === a.job_id ? 'Close' : 'Draft follow-up'}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                  {followupJobId === a.job_id && (
+                    <tr className="followup-row">
+                      <td colSpan={6}>
+                        <FollowupPanel jobId={a.job_id} />
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               ))}
             </tbody>
           </table>
         </div>
       )}
     </>
+  )
+}
+
+type DraftView =
+  | { kind: 'idle' }
+  | { kind: 'loading' }
+  | { kind: 'error'; message: string }
+  | { kind: 'ready'; draft: FollowupDraft }
+
+function FollowupPanel({ jobId }: { jobId: string }) {
+  const [view, setView] = useState<DraftView>({ kind: 'idle' })
+  const [subject, setSubject] = useState('')
+  const [body, setBody] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState<string | null>(null)
+
+  function show(draft: FollowupDraft) {
+    setView({ kind: 'ready', draft })
+    setSubject(draft.subject)
+    setBody(draft.body)
+  }
+
+  async function prepare() {
+    setView({ kind: 'loading' })
+    try {
+      show(await createFollowup(jobId))
+    } catch (error) {
+      setView({ kind: 'error', message: (error as Error).message })
+    }
+  }
+
+  async function save(event: FormEvent, draft: FollowupDraft) {
+    event.preventDefault()
+    setSaving(true)
+    setSaveMessage(null)
+    try {
+      show(await saveFollowup(draft.id, subject, body))
+      setSaveMessage('Saved.')
+    } catch (error) {
+      setSaveMessage((error as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (view.kind !== 'ready') {
+    return (
+      <div className="followup">
+        <p className="hint">
+          Prepare a message asking the contractor for insurance evidence that covers the whole job. It is stored as
+          a draft; nothing is sent.
+        </p>
+        <button type="button" onClick={prepare} disabled={view.kind === 'loading'}>
+          {view.kind === 'loading' ? 'Preparing…' : 'Prepare draft'}
+        </button>
+        {view.kind === 'error' && (
+          <p className="error" role="alert">
+            {view.message}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  const { draft } = view
+  const changed = subject !== draft.subject || body !== draft.body
+
+  return (
+    <form className="followup" onSubmit={(e) => save(e, draft)}>
+      <p className="notice">Draft #{draft.id} · not sent. Sending will need approval in a later step.</p>
+      <dl>
+        <dt>To</dt>
+        <dd>
+          {draft.recipient} <span className="secondary">· {draft.contractor_id}</span>
+        </dd>
+        <dt>Evidence</dt>
+        <dd>{draft.evidence_ids.join(', ')}</dd>
+      </dl>
+      <label>
+        Subject
+        <input value={subject} onChange={(e) => setSubject(e.target.value)} required maxLength={200} />
+      </label>
+      <label>
+        Message
+        <textarea value={body} onChange={(e) => setBody(e.target.value)} required maxLength={5000} rows={12} />
+      </label>
+      <div className="followup-actions">
+        <button type="submit" disabled={saving || !changed}>
+          {saving ? 'Saving…' : 'Save draft'}
+        </button>
+        {saveMessage && <span className="hint" role="status">{saveMessage}</span>}
+      </div>
+    </form>
   )
 }
 

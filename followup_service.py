@@ -1,11 +1,13 @@
-from assessment_service import get_job_assessment
+from sqlalchemy import Connection
+
+from assessment_service import assess_job_by_id
 from readiness import find_documents, check_document
-from db import get_engine
 from repository import contractors_by_id
 from followup_repository import save_draft
 
-def prepare_followup(job_id: str) -> dict:
-    assessment = get_job_assessment(job_id)
+
+def prepare_followup(connection: Connection, job_id: str) -> dict:
+    assessment = assess_job_by_id(connection, job_id)
     if assessment["status"] == "READY":
         raise ValueError(
             f"Job {job_id} meets the configured requirements; "
@@ -55,11 +57,7 @@ def prepare_followup(job_id: str) -> dict:
             "Insurance has other issues that need review before "
             "using the expiry follow-up template."
         )
-    with get_engine().connect() as connection:
-        contractors = contractors_by_id(
-            connection,
-            [contractor_id],
-        )
+    contractors = contractors_by_id(connection, [contractor_id])
 
     contractor = contractors.get(contractor_id)
 
@@ -99,7 +97,7 @@ def prepare_followup(job_id: str) -> dict:
         "reason": assessment["reason"],
         "policy_id": job["policy_id"],
         "policy_version": job["policy_version"],
-                "source_snapshot": {
+        "source_snapshot": {
             "assessment": assessment,
             "contractor": {
                 "id": contractor["id"],
@@ -112,10 +110,8 @@ def prepare_followup(job_id: str) -> dict:
         ],
     }
 
-def create_followup(job_id: str) -> dict:
-    draft = prepare_followup(job_id)
-
-    with get_engine().begin() as connection:
-        draft_id = save_draft(connection, draft)
-
+def create_followup(connection: Connection, job_id: str) -> dict:
+    """Prepare and store a draft; the caller owns the transaction."""
+    draft = prepare_followup(connection, job_id)
+    draft_id = save_draft(connection, draft)
     return {"id": draft_id, **draft}

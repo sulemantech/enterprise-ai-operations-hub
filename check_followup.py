@@ -1,7 +1,9 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from copy import deepcopy
 
 from followup_service import prepare_followup
+
+connection = MagicMock()
 
 assessment = {
     "status": "BLOCKED",
@@ -13,17 +15,17 @@ assessment = {
 }
 
 with patch(
-    "followup_service.get_job_assessment",
+    "followup_service.assess_job_by_id",
     return_value=assessment,
-), patch("followup_service.get_engine") as mock_engine:
+), patch("followup_service.contractors_by_id") as mock_contractors:
     try:
-        prepare_followup("JOB-MULTI")
+        prepare_followup(connection, "JOB-MULTI")
     except ValueError as error:
         assert "exactly one assigned contractor" in str(error)
     else:
         raise AssertionError("Expected multiple contractors to be rejected.")
 
-    mock_engine.assert_not_called()
+    mock_contractors.assert_not_called()
 
 print("Multiple-contractor guard passed.")
 
@@ -59,17 +61,17 @@ assessment_with_valid_insurance = {
 }
 
 with patch(
-    "followup_service.get_job_assessment",
+    "followup_service.assess_job_by_id",
     return_value=assessment_with_valid_insurance,
-), patch("followup_service.get_engine") as mock_engine:
+), patch("followup_service.contractors_by_id") as mock_contractors:
     try:
-        prepare_followup("JOB-TEST")
+        prepare_followup(connection, "JOB-TEST")
     except ValueError as error:
         assert "insurance document already meets" in str(error)
     else:
         raise AssertionError("Expected valid insurance to prevent the draft.")
 
-    mock_engine.assert_not_called()
+    mock_contractors.assert_not_called()
 
 print("Valid insurance prevents expiry follow-up.")
 
@@ -77,10 +79,8 @@ expired_assessment = deepcopy(assessment_with_valid_insurance)
 expired_assessment["documents"][0]["valid_to"] = "2026-10-07"
 
 with patch(
-    "followup_service.get_job_assessment",
+    "followup_service.assess_job_by_id",
     return_value=expired_assessment,
-), patch(
-    "followup_service.get_engine",
 ), patch(
     "followup_service.contractors_by_id",
     return_value={
@@ -92,7 +92,7 @@ with patch(
     },
 ):
     try:
-        prepare_followup("JOB-TEST")
+        prepare_followup(connection, "JOB-TEST")
     except ValueError as error:
         assert "has no email address" in str(error)
     else:
@@ -111,10 +111,8 @@ draft_assessment["job"].update({
 })
 
 with patch(
-    "followup_service.get_job_assessment",
+    "followup_service.assess_job_by_id",
     return_value=draft_assessment,
-), patch(
-    "followup_service.get_engine",
 ), patch(
     "followup_service.contractors_by_id",
     return_value={
@@ -125,7 +123,7 @@ with patch(
         }
     },
 ):
-    draft = prepare_followup("JOB-TEST")
+    draft = prepare_followup(connection, "JOB-TEST")
 
 assert draft["status"] == "draft"
 assert draft["job_id"] == "JOB-TEST"

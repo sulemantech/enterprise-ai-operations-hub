@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
-from api import app, get_connection
+from api import app, get_connection, get_transaction
 from db import get_engine
 
 
@@ -36,6 +36,7 @@ def db_connection():
 def client(db_connection):
     """An API client whose requests use the test's rolled-back connection."""
     app.dependency_overrides[get_connection] = lambda: db_connection
+    app.dependency_overrides[get_transaction] = lambda: db_connection
     try:
         yield TestClient(app)
     finally:

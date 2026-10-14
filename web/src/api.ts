@@ -34,10 +34,23 @@ function errorMessage(body: unknown, status: number): string {
   return `Request failed (HTTP ${status})`
 }
 
-export async function fetchAssessments(start: string, end: string): Promise<Assessment[]> {
+export interface FollowupDraft {
+  id: number
+  status: string
+  job_id: string
+  contractor_id: string
+  recipient: string
+  subject: string
+  body: string
+  reason: string
+  evidence_ids: string[]
+  created_at: string
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
   try {
-    response = await fetch(`/api/assessments?${new URLSearchParams({ start, end })}`)
+    response = await fetch(`/api${path}`, init)
   } catch {
     throw new Error('Cannot reach the API. Is "fastapi dev api.py" running?')
   }
@@ -53,5 +66,22 @@ export async function fetchAssessments(start: string, end: string): Promise<Asse
     }
     throw new Error(errorMessage(body, response.status))
   }
-  return body as Assessment[]
+  return body as T
+}
+
+export function fetchAssessments(start: string, end: string): Promise<Assessment[]> {
+  return request(`/assessments?${new URLSearchParams({ start, end })}`)
+}
+
+// Stores a draft on the server. Nothing is sent to the contractor.
+export function createFollowup(jobId: string): Promise<FollowupDraft> {
+  return request(`/assessments/${encodeURIComponent(jobId)}/followups`, { method: 'POST' })
+}
+
+export function saveFollowup(id: number, subject: string, body: string): Promise<FollowupDraft> {
+  return request(`/followups/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ subject, body }),
+  })
 }

@@ -281,3 +281,81 @@ td code {
     padding: 10px;
   }
 }
+
+input,
+textarea {
+  min-width: 0;
+}
+
+textarea {
+  font: inherit;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  resize: vertical;
+}
+
+button.secondary-button {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.followup-row > td {
+  background: var(--bg);
+}
+
+/* Overrides the date form's flex row: the draft reads top to bottom. */
+.followup {
+  display: grid;
+  gap: 12px;
+  align-items: start;
+  justify-items: start;
+  max-width: 720px;
+  margin: 0;
+}
+
+.followup label,
+.followup input,
+.followup textarea {
+  width: 100%;
+}
+
+.followup .notice {
+  margin: 0;
+  font-weight: 600;
+}
+
+.followup dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  margin: 0;
+}
+
+.followup dt {
+  color: var(--muted);
+}
+
+.followup dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.followup-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
