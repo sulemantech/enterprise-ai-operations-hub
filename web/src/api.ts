@@ -85,3 +85,8 @@ export function saveFollowup(id: number, subject: string, body: string): Promise
     body: JSON.stringify({ subject, body }),
   })
 }
+
+// Approves the saved text. Editing afterwards returns it to draft.
+export function approveFollowup(id: number): Promise<FollowupDraft> {
+  return request(`/followups/${id}/approve`, { method: 'POST' })
+}

@@ -13,6 +13,7 @@ from sqlalchemy import Connection
 
 import followup_repository
 import repository
+from approval import ApprovalError, approve_draft
 from db import get_engine
 from followup_service import create_followup
 from readiness import assess_job
@@ -23,6 +24,7 @@ MAX_WINDOW_DAYS = 31
 # Drafts are still looked up by organisation so adding real users later only
 # changes where this value comes from.
 DEMO_ORGANISATION_ID = "ORG-DEMO"
+DEMO_USER = "demo-manager"
 
 app = FastAPI(title="Contractor readiness (demo)")
 
@@ -171,3 +173,15 @@ def edit_followup_draft(
             raise HTTPException(status_code=404, detail=f"Draft {draft_id} not found")
         raise HTTPException(status_code=409, detail="Only drafts can be edited")
     return draft
+
+
+@app.post("/followups/{draft_id}/approve", response_model=FollowupDraft)
+def approve_followup_draft(draft_id: int, connection: Connection = Depends(get_transaction)):
+    """Approve the draft's current text. Editing it afterwards needs a new approval."""
+    try:
+        approval = approve_draft(connection, draft_id, DEMO_ORGANISATION_ID, DEMO_USER)
+    except ApprovalError as error:
+        raise HTTPException(status_code=409, detail=str(error))
+    if approval is None:
+        raise HTTPException(status_code=404, detail=f"Draft {draft_id} not found")
+    return followup_repository.get_draft(connection, draft_id, DEMO_ORGANISATION_ID)

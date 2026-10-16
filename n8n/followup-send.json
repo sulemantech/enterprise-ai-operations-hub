@@ -1,0 +1,177 @@
+{
+  "name": "Send approved follow-up",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "followup-send",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "109eefbc-0865-4f46-b47e-02294a46ed48",
+      "name": "Webhook",
+      "webhookId": "1cb79752-98c8-4650-b443-a78201209042",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4KclCxDMn7XKlFKY",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"status\": \"sent\", \"draft_id\": {{ $('Webhook').item.json.body.draft_id }}}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        768,
+        -16
+      ],
+      "id": "83baffbe-4bfe-4cf0-8440-9aace537844e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "705dfbf8-c3a6-490e-9dcc-1b8f72aada8a",
+              "leftValue": "={{ $json.body.recipient }}",
+              "rightValue": "@example.invalid",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f40fdcba-f7b2-454c-99b5-68c2c99d4b66",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\": \"rejected\", \"reason\": \"recipient not allowed\"}",
+        "options": {
+          "responseCode": 422
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        608,
+        160
+      ],
+      "id": "2fa818a9-e0f8-4f66-958e-0b84ff283773",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "followups@demo.invalid",
+        "toEmail": "={{ $json.body.recipient }} ",
+        "subject": "={{ $json.body.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $json.body.body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "2cfa62b6-4d9f-43da-be72-af494e185b24",
+      "name": "Send an Email",
+      "webhookId": "8a923231-608a-4fee-a4b4-7f9dcb046efd",
+      "credentials": {
+        "smtp": {
+          "id": "elkfMgeWzs1wZhQT",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "007e0779-def5-4f9e-8ce3-13cdf9a937a4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "37dabbf20260bf985540abd8d83d72d08e327412977f790f994a5b55cbfed508"
+  },
+  "nodeGroups": [],
+  "id": "7o3gmyeaZBrLXRBu",
+  "tags": []
+}

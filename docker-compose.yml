@@ -19,5 +19,27 @@ services:
       timeout: 3s
       retries: 10
 
+  # Test inbox: accepts any SMTP message and delivers nothing.
+  # Read captured messages at http://localhost:8025.
+  # Other services reach its SMTP server as mailpit:1025.
+  mailpit:
+    image: axllent/mailpit:v1.31.5
+    ports:
+      - "127.0.0.1:8025:8025"
+
+  # Workflow runner. Editor at http://localhost:5678.
+  n8n:
+    image: n8nio/n8n:2.43.5
+    environment:
+      GENERIC_TIMEZONE: Australia/Sydney
+      TZ: Australia/Sydney
+    ports:
+      - "127.0.0.1:5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+    depends_on:
+      - mailpit
+
 volumes:
   db-data:
+  n8n-data:

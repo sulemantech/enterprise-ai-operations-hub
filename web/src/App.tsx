@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState, type FormEvent } from 'react'
 import {
+  approveFollowup,
   createFollowup,
   fetchAssessments,
   saveFollowup,
@@ -256,6 +257,19 @@ function FollowupPanel({ jobId }: { jobId: string }) {
     }
   }
 
+  async function approve(draft: FollowupDraft) {
+    setSaving(true)
+    setSaveMessage(null)
+    try {
+      show(await approveFollowup(draft.id))
+      setSaveMessage('Approved.')
+    } catch (error) {
+      setSaveMessage((error as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function save(event: FormEvent, draft: FollowupDraft) {
     event.preventDefault()
     setSaving(true)
@@ -294,7 +308,11 @@ function FollowupPanel({ jobId }: { jobId: string }) {
 
   return (
     <form className="followup" onSubmit={(e) => save(e, draft)}>
-      <p className="notice">Draft #{draft.id} · not sent. Sending will need approval in a later step.</p>
+      <p className="notice">
+        {draft.status === 'approved'
+          ? `Message #${draft.id} · approved, not sent yet. Editing it will need approval again.`
+          : `Draft #${draft.id} · not sent. Approve it before it can be sent.`}
+      </p>
       <dl>
         <dt>To</dt>
         <dd>
@@ -315,6 +333,18 @@ function FollowupPanel({ jobId }: { jobId: string }) {
         <button type="submit" disabled={saving || !changed}>
           {saving ? 'Saving…' : 'Save draft'}
         </button>
+        {/* Approval applies to the saved text, so unsaved edits must be saved first. */}
+        {draft.status === 'draft' && (
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={saving || changed}
+            title={changed ? 'Save your edits before approving' : undefined}
+            onClick={() => approve(draft)}
+          >
+            Approve
+          </button>
+        )}
         {saveMessage && <span className="hint" role="status">{saveMessage}</span>}
       </div>
     </form>

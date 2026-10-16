@@ -90,16 +90,21 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Session 14: retrieval failure, empty results and unsupported citations fall back to the plain assessment; failed assessments skip retrieval. Checked with mocked scripts (`check_retrieval_failure.py`, `check_citation_fallback.py`), not live evaluation.
 - [x] Session 15: `followup_service.py` drafts an insurance-expiry message for a blocked job with one contractor and refuses other findings. Drafts are stored in `followup_drafts` with the evidence IDs and an assessment snapshot. `POST /assessments/{job_id}/followups`, `GET` and `PATCH /followups/{id}`; the UI shows the exact recipient and editable subject/body. Nothing is sent. `tests/test_followups.py` covers the endpoints.
 
-Focus from here: approval, then the n8n send. LLM provider: Claude (Anthropic API).
+- [x] Session 16: `approval.py` records approvals in `followup_approvals` (migration `0004`): who, when, a copy of the exact recipient/subject/body and its SHA-256 fingerprint. `authorise_execution` refuses unapproved drafts, drafts edited after approval and text changed outside the API. `POST /followups/{id}/approve` and an Approve button. Approval expiry and evidence-freshness checks are deferred. Fast-tracked at the learner's request.
 
-## Next session: Session 16, local approval
+Focus from here: n8n and the test inbox. LLM provider: Claude (Anthropic API).
 
-1. Add an approval step that stores exactly what was approved: draft ID, subject, body, recipient and when. Decide whether approval is a new row or columns on the draft.
-2. Enforce on the server: only an approved draft whose text still matches the approved version can be executed; editing after approval returns it to `draft`.
-3. Add an Approve button to the draft panel and show the approved state.
-4. Test that unapproved and edited-after-approval drafts are refused.
+## Next session: Session 17, n8n and test inbox
 
-Done when: an unapproved or edited draft cannot execute, and you can explain where that rule is enforced and why it is not in the UI.
+The learner builds this session themselves; the assistant reviews.
+
+1. Add Mailpit (test inbox) and n8n to `docker-compose.yml`, then create the n8n owner account and look around the editor: workflows, nodes, credentials, executions.
+2. Build the workflow in n8n: Webhook (POST, header auth) -> Send Email (SMTP to `mailpit:1025`) -> Respond to Webhook. Test with `curl`; the message appears in Mailpit.
+3. App side: `POST /followups/{id}/send` runs `authorise_execution`, then calls the webhook with the shared secret from `.env`.
+4. Break it: wrong secret, unapproved draft, n8n stopped, Mailpit stopped. Note what each one looks like from the app.
+5. Export the workflow JSON into `n8n/` so it is versioned with the code.
+
+Done when: one approved follow-up appears in Mailpit, and an unapproved one cannot be sent even by calling the webhook path through the app.
 
 Known limits: follow-ups support only `EXPIRES_BEFORE_JOB_END` with one contractor; there is no sign-in, so the API acts for `ORG-DEMO`.
 

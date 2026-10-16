@@ -71,10 +71,10 @@ def test_empty_edit_is_rejected(client):
     assert response.status_code == 422
 
 
-def test_only_drafts_can_be_edited(client, db_connection):
+def test_sent_messages_cannot_be_edited(client, db_connection):
     draft = create_draft(client).json()
     db_connection.execute(
-        text("UPDATE followup_drafts SET status = 'approved' WHERE id = :id"), {"id": draft["id"]}
+        text("UPDATE followup_drafts SET status = 'sent' WHERE id = :id"), {"id": draft["id"]}
     )
 
     response = client.patch(f"/followups/{draft['id']}", json={"subject": "s", "body": "b"})
