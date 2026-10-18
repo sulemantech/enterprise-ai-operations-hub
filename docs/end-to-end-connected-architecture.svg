@@ -7,16 +7,16 @@
     <marker id="futureArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#3979c3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
     <marker id="returnArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#27835d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
     <style>
-      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.title{font-size:40px;font-weight:750;letter-spacing:-.7px}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:21px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.white{fill:#fff}.gold{fill:#f2c45c}.green{fill:#27835d}.amber{fill:#8d6412}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}.feedback{fill:none;stroke:#27835d;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#returnArrow)}
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.techline{font-size:22px;font-weight:800;letter-spacing:1px;fill:#2f5d88}.title{font-size:50px;font-weight:750;letter-spacing:-.7px}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:21px;font-weight:720}.techHead{font-size:25px;font-weight:800}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.white{fill:#fff}.gold{fill:#f2c45c}.green{fill:#27835d}.amber{fill:#8d6412}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}.feedback{fill:none;stroke:#27835d;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#returnArrow)}
     </style>
   </defs>
   <rect width="1600" height="1100" fill="#f4f7fb"/>
   <circle cx="1510" cy="70" r="195" fill="#e8f1fb" opacity=".65"/>
   <circle cx="80" cy="1080" r="230" fill="#edf4ee" opacity=".65"/>
 
-  <text x="78" y="69" class="eyebrow">ENTERPRISE AI OPERATIONS HUB</text>
-  <text x="78" y="125" class="title">End-to-end connected architecture</text>
-  <text x="80" y="160" class="sub">Evidence check → grounded explanation → human-approved follow-up → delivery result</text>
+  <text x="78" y="69" class="techline">FastAPI  +  LangGraph  +  n8n</text>
+  <text x="78" y="125" class="title">AI-Assisted Contractor Evidence Workflow</text>
+  <text x="80" y="165" class="sub">Evidence check → grounded explanation → human approval → follow-up delivery</text>
   <rect x="1245" y="62" width="275" height="44" rx="22" fill="#fff3d8" stroke="#e9c46a"/>
   <circle cx="1268" cy="84" r="6" fill="#d69b22"/><text x="1284" y="89" class="tag amber">TARGET · INTEGRATION IN PROGRESS</text>
 
@@ -38,11 +38,11 @@
 
     <rect x="375" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
     <rect x="395" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="408" y="424" class="tag green">IMPLEMENTED</text>
-    <text x="397" y="462" class="head">FastAPI server</text><text x="397" y="491" class="body">Data, checks, drafts</text><text x="397" y="514" class="small">Approval endpoints</text>
+    <text x="397" y="462" class="techHead">FastAPI</text><text x="397" y="491" class="body">Application API · drafts</text><text x="397" y="514" class="small">Assessment + approval routes</text>
 
     <rect x="705" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
     <rect x="725" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="738" y="424" class="tag green">CLI EXISTS</text>
-    <text x="727" y="462" class="head">LangGraph</text><text x="727" y="491" class="body">Plans tool-based reasoning</text><text x="727" y="514" class="small">API invocation is pending</text>
+    <text x="727" y="462" class="techHead">LangGraph</text><text x="727" y="491" class="body">AI reasoning workflow</text><text x="727" y="514" class="small">API invocation is pending</text>
 
     <rect x="1035" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
     <rect x="1055" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="1068" y="424" class="tag green">IMPLEMENTED</text>
@@ -77,7 +77,7 @@
 
     <rect x="740" y="749" width="270" height="140" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
     <rect x="760" y="767" width="97" height="24" rx="12" fill="#fff2d7"/><text x="773" y="784" class="tag amber">WORKFLOW EXISTS</text>
-    <text x="762" y="825" class="head">n8n webhook</text><text x="762" y="854" class="body">Guarded test-recipient send</text><text x="762" y="876" class="small">Server call still to add</text>
+    <text x="762" y="825" class="techHead">n8n</text><text x="762" y="854" class="body">Webhook · email automation</text><text x="762" y="876" class="small">Test-only · server call pending</text>
 
     <rect x="1075" y="749" width="190" height="140" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
     <rect x="1095" y="767" width="97" height="24" rx="12" fill="#fff2d7"/><text x="1108" y="784" class="tag amber">TEST ONLY</text>

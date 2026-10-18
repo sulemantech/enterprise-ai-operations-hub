@@ -7,13 +7,13 @@
     <marker id="futureArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#3979c3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
     <marker id="rejectArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#b84552" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
     <style>
-      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.title{font-size:39px;font-weight:750}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:20px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.amber{fill:#8d6412}.green{fill:#27835d}.red{fill:#b84552}.white{fill:#fff}.gold{fill:#f2c45c}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:22px;font-weight:800;letter-spacing:1px;fill:#4b78a8}.title{font-size:48px;font-weight:750}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:20px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.amber{fill:#8d6412}.green{fill:#27835d}.red{fill:#b84552}.white{fill:#fff}.gold{fill:#f2c45c}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}
     </style>
   </defs>
   <rect width="1600" height="900" fill="#f4f7fb"/><circle cx="1480" cy="75" r="190" fill="#e8f1fb" opacity=".65"/>
-  <text x="78" y="69" class="eyebrow">N8N · APPROVED FOLLOW-UP DELIVERY</text>
-  <text x="78" y="125" class="title">A guarded test-send workflow</text>
-  <text x="80" y="160" class="sub">The workflow is configured; the application server still needs to call it after approval.</text>
+  <text x="78" y="69" class="eyebrow">n8n · approved follow-up delivery</text>
+  <text x="78" y="125" class="title">How approved follow-ups reach the test inbox</text>
+  <text x="80" y="165" class="sub">n8n checks the recipient, sends through SMTP, and returns a workflow response</text>
   <rect x="1285" y="64" width="235" height="42" rx="21" fill="#fff3d8" stroke="#e9c46a"/><text x="1311" y="90" class="tag amber">TEST DESTINATION ONLY</text>
 
   <text x="84" y="239" class="lane">ALLOWED PATH · ONLY THE TEST RECIPIENT PASSES</text>
