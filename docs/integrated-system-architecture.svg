@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Human-governed contractor operations system</title>
+  <desc id="desc">Architecture overview showing the current React, API, Python rules, PostgreSQL and separate LangGraph CLI, alongside the planned API connections to LangGraph and n8n after human approval.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="blueArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#3979c3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="greenArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#27835d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.light{fill:#fff}.goldText{fill:#f2c45c}.amberText{fill:#8d6412}.eyebrow{font-size:16px;font-weight:700;letter-spacing:3px;fill:#4b78a8}.title{font-size:43px;font-weight:750;letter-spacing:-1px}.sub{font-size:19px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:22px;font-weight:700}.body{font-size:16px;fill:#52647a}.small{font-size:14px;fill:#64748b}.tag{font-size:13px;font-weight:750;letter-spacing:1px}.arrow{fill:none;stroke:#64748b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.future{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:10 9;stroke-linecap:round;marker-end:url(#blueArrow)}.return{fill:none;stroke:#27835d;stroke-width:3;stroke-dasharray:10 9;stroke-linecap:round;marker-end:url(#greenArrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="#f4f7fb"/>
+  <circle cx="1470" cy="94" r="190" fill="#e8f1fb" opacity=".7"/>
+  <circle cx="80" cy="950" r="220" fill="#edf4ee" opacity=".75"/>
+  <text x="88" y="82" class="eyebrow">ENTERPRISE AI OPERATIONS HUB</text>
+  <text x="88" y="139" class="title">Human-governed contractor operations</text>
+  <text x="90" y="177" class="sub">A practical architecture for evidence checks, AI-assisted explanations and approved follow-ups</text>
+  <rect x="1255" y="74" width="255" height="46" rx="23" fill="#fff3d8" stroke="#e9c46a"/>
+  <circle cx="1280" cy="97" r="6" fill="#d69b22"/><text x="1295" y="102" class="tag amberText">INTEGRATION IN PROGRESS</text>
+
+  <rect x="78" y="222" width="1444" height="83" rx="18" fill="#182d49"/>
+  <path d="M112 263 127 248 142 263 127 278Z" fill="none" stroke="#f2c45c" stroke-width="3"/><path d="m120 263 5 5 9-11" fill="none" stroke="#f2c45c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="166" y="255" font-size="15" font-weight="750" letter-spacing="2" class="goldText">CROSS-CUTTING GUARDRAILS</text>
+  <text x="166" y="282" font-size="17" class="light">Server-owned approval</text>
+  <circle cx="372" cy="277" r="3" fill="#f2c45c"/><text x="392" y="282" font-size="17" class="light">Deterministic rules stay authoritative</text>
+  <circle cx="747" cy="277" r="3" fill="#f2c45c"/><text x="767" y="282" font-size="17" class="light">Scoped tools and validated inputs</text>
+  <circle cx="1107" cy="277" r="3" fill="#f2c45c"/><text x="1127" y="282" font-size="17" class="light">Auditable action outcomes</text>
+
+  <text x="90" y="354" class="lane">CURRENTLY IMPLEMENTED</text>
+  <text x="90" y="382" class="small">Solid arrows show working paths today</text>
+  <g filter="url(#shadow)">
+    <rect x="90" y="415" width="245" height="137" rx="18" fill="#fff" stroke="#d8e1eb" stroke-width="2"/>
+    <rect x="90" y="415" width="245" height="8" rx="4" fill="#e3b64d"/>
+    <circle cx="126" cy="460" r="18" fill="#fff5dc"/><path d="M119 460a7 7 0 1 1 14 0c0 4-3 5-5 8h-4c-2-3-5-4-5-8m5 11h4" fill="none" stroke="#b8841e" stroke-width="2"/>
+    <text x="157" y="466" class="head">Manager</text><text x="116" y="505" class="body">Reviews readiness and drafts</text><text x="116" y="530" class="small">React browser</text>
+
+    <rect x="420" y="415" width="315" height="137" rx="18" fill="#fff" stroke="#d8e1eb" stroke-width="2"/>
+    <rect x="420" y="415" width="315" height="8" rx="4" fill="#4b8ac8"/>
+    <rect x="448" y="445" width="36" height="34" rx="7" fill="#eaf4ff"/><path d="M457 455h18m-18 8h18m-18 8h12" stroke="#3979c3" stroke-width="2" stroke-linecap="round"/>
+    <text x="497" y="466" class="head">Application API</text><text x="447" y="505" class="body">Reads, assesses, saves drafts</text><text x="447" y="530" class="small">FastAPI · server authority</text>
+
+    <rect x="820" y="415" width="305" height="137" rx="18" fill="#fff" stroke="#d8e1eb" stroke-width="2"/>
+    <rect x="820" y="415" width="305" height="8" rx="4" fill="#4d956a"/>
+    <ellipse cx="858" cy="451" rx="17" ry="7" fill="#eaf5ed" stroke="#4d956a" stroke-width="2"/><path d="M841 451v25c0 10 34 10 34 0v-25m-34 8c0 9 34 9 34 0m-34 8c0 9 34 9 34 0" fill="none" stroke="#4d956a" stroke-width="2"/>
+    <text x="888" y="466" class="head">PostgreSQL</text><text x="847" y="505" class="body">Operational records and drafts</text><text x="847" y="530" class="small">Persistent project data</text>
+
+    <rect x="1210" y="415" width="300" height="137" rx="18" fill="#fff" stroke="#d8e1eb" stroke-width="2"/>
+    <rect x="1210" y="415" width="300" height="8" rx="4" fill="#54a176"/>
+    <path d="M1243 447h32v29h-32zM1249 455h20m-20 7h20m-20 7h14" fill="none" stroke="#4d956a" stroke-width="2" stroke-linecap="round"/>
+    <text x="1289" y="466" class="head">Python rules</text><text x="1237" y="505" class="body">Readiness status and reason</text><text x="1237" y="530" class="small">Deterministic checks</text>
+  </g>
+  <path class="arrow" d="M341 481h67"/><path class="arrow" d="M741 481h67"/><path class="arrow" d="M1131 481h67"/>
+
+  <rect x="90" y="584" width="1420" height="123" rx="18" fill="#f3efff" stroke="#d5c9f0" stroke-width="2"/>
+  <rect x="112" y="604" width="133" height="28" rx="14" fill="#e3dafa"/><text x="128" y="623" class="tag" fill="#674aa2">IMPLEMENTED</text>
+  <text x="112" y="666" class="head">LangGraph assistant</text>
+  <text x="370" y="630" class="body">Coordinates tool-based assessment and grounded explanations</text>
+  <text x="370" y="660" class="small">Today: separate CLI workflow · not yet called from the browser/API</text>
+  <rect x="1164" y="608" width="316" height="72" rx="13" fill="#fff" stroke="#d8cbed"/>
+  <text x="1183" y="636" class="tag" fill="#674aa2">HARNESS + GUARDRAILS</text>
+  <text x="1183" y="661" class="small">Typed state · tool allowlist · validated output</text>
+  <path class="future" d="M575 555v20"/>
+
+  <text x="90" y="759" class="lane">APPROVED FOLLOW-UP · TARGET CONNECTION</text>
+  <text x="90" y="786" class="small">Dashed arrows mark integration work not yet wired end-to-end</text>
+  <g filter="url(#shadow)">
+    <rect x="90" y="815" width="340" height="113" rx="17" fill="#fff" stroke="#e2c76e" stroke-width="2"/>
+    <circle cx="127" cy="852" r="16" fill="#fff5dc"/><path d="m119 852 6 6 11-13" fill="none" stroke="#b8841e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="158" y="858" class="head">Human approval</text><text x="116" y="894" class="body">Exact recipient + message</text><text x="116" y="916" class="small">Saved approval fingerprint</text>
+
+    <rect x="500" y="815" width="340" height="113" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <path d="M531 842h28v23h-28zM537 849h16m-16 6h16" fill="none" stroke="#3979c3" stroke-width="2" stroke-linecap="round"/>
+    <text x="572" y="858" class="head">Server execution gate</text><text x="526" y="894" class="body">Verify approval before action</text><text x="526" y="916" class="small">Approval check exists; send route pending</text>
+
+    <rect x="910" y="815" width="270" height="113" rx="17" fill="#fff" stroke="#d8e1eb" stroke-width="2"/>
+    <path d="M940 843h28v26h-28zm7 7h14m-14 7h14" fill="none" stroke="#536a83" stroke-width="2" stroke-linecap="round"/>
+    <text x="981" y="858" class="head">n8n workflow</text><text x="936" y="894" class="body">Webhook + test recipient guard</text><text x="936" y="916" class="small">Workflow defined separately</text>
+
+    <rect x="1250" y="815" width="260" height="113" rx="17" fill="#fff" stroke="#a6d3b7" stroke-width="2"/>
+    <path d="M1280 845h34v24h-34zM1281 847l16 13 16-13" fill="none" stroke="#27835d" stroke-width="2" stroke-linejoin="round"/>
+    <text x="1326" y="858" class="head">Test inbox</text><text x="1276" y="894" class="body">Delivery outcome</text><text x="1276" y="916" class="small">Feedback to API to be added</text>
+  </g>
+  <path class="future" d="M430 870h60"/><path class="future" d="M840 870h60"/><path class="future" d="M1180 870h58"/>
+  <path class="return" d="M1380 930v17H670v-18"/>
+  <text x="96" y="973" class="small">Solid = implemented path   ·   Dashed = planned connection</text>
+  <text x="1508" y="973" text-anchor="end" class="small">Synthetic data · no external customer integration</text>
+</svg>

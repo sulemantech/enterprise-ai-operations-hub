@@ -21,6 +21,14 @@ The CLI graph is not yet connected to the browser. Document readiness is not an 
 
 See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG context](docs/knowledge/README.md).
 
+## System architecture
+
+![End-to-end connected architecture: solid lines show working capability; dashed lines show integration work remaining](docs/end-to-end-connected-architecture.png)
+
+The diagram shows the complete target journey. The React app, FastAPI, Python checks, PostgreSQL, LangGraph CLI, draft approval records, and n8n test workflow exist, but the API-to-LangGraph and approval-gated API-to-n8n connections still need wiring. This is a project in progress, not a deployed production service or a real customer integration. [Open the SVG](docs/end-to-end-connected-architecture.svg).
+
+See the [animated workflow GIF](docs/contractor-readiness-workflow.gif) and [LinkedIn architecture image](docs/contractor-readiness-production-linkedin.png) for additional visuals.
+
 ## Our example
 
 A manager checks fictional jobs and sees which contractors have missing documents. The planned complete journey adds procedure citations and approved follow-ups to a test inbox. Four fixed jobs provide predictable examples; generated records provide a larger dataset.

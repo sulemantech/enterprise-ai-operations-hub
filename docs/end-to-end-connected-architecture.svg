@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+  <title id="title">End-to-end connected contractor operations architecture</title>
+  <desc id="desc">Target end-to-end flow connecting React, FastAPI, LangGraph, Python tools, PostgreSQL, human approval, an n8n workflow, a test inbox and delivery-status feedback. Solid connectors indicate existing capability; dashed connectors indicate integration work remaining.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#60758b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="futureArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#3979c3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="returnArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#27835d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.title{font-size:40px;font-weight:750;letter-spacing:-.7px}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:21px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.white{fill:#fff}.gold{fill:#f2c45c}.green{fill:#27835d}.amber{fill:#8d6412}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}.feedback{fill:none;stroke:#27835d;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#returnArrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1100" fill="#f4f7fb"/>
+  <circle cx="1510" cy="70" r="195" fill="#e8f1fb" opacity=".65"/>
+  <circle cx="80" cy="1080" r="230" fill="#edf4ee" opacity=".65"/>
+
+  <text x="78" y="69" class="eyebrow">ENTERPRISE AI OPERATIONS HUB</text>
+  <text x="78" y="125" class="title">End-to-end connected architecture</text>
+  <text x="80" y="160" class="sub">Evidence check → grounded explanation → human-approved follow-up → delivery result</text>
+  <rect x="1245" y="62" width="275" height="44" rx="22" fill="#fff3d8" stroke="#e9c46a"/>
+  <circle cx="1268" cy="84" r="6" fill="#d69b22"/><text x="1284" y="89" class="tag amber">TARGET · INTEGRATION IN PROGRESS</text>
+
+  <rect x="78" y="192" width="1444" height="88" rx="17" fill="#182d49"/>
+  <path d="M111 235 127 219 143 235 127 251Z" fill="none" stroke="#f2c45c" stroke-width="3"/><path d="m120 235 5 5 9-11" fill="none" stroke="#f2c45c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="168" y="225" font-size="14" font-weight="750" letter-spacing="1.6" class="gold">HUMAN + SERVER GUARDRAILS</text>
+  <text x="168" y="253" font-size="16" class="white">Rules remain authoritative</text>
+  <circle cx="382" cy="248" r="3" fill="#f2c45c"/><text x="400" y="253" font-size="16" class="white">Approve exact message before send</text>
+  <circle cx="700" cy="248" r="3" fill="#f2c45c"/><text x="718" y="253" font-size="16" class="white">Bounded, validated agent tools</text>
+  <circle cx="1004" cy="248" r="3" fill="#f2c45c"/><text x="1022" y="253" font-size="16" class="white">Verify delivery; never assume success</text>
+
+  <text x="84" y="323" class="lane">01 · INVESTIGATE AND EXPLAIN</text>
+  <text x="84" y="347" class="small">Solid connectors are implemented; blue dashed connectors still need wiring.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="389" width="230" height="139" rx="17" fill="#fff" stroke="#e2c76e" stroke-width="2"/>
+    <rect x="100" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="113" y="424" class="tag green">IMPLEMENTED</text>
+    <text x="102" y="462" class="head">React app</text><text x="102" y="491" class="body">Manager asks, reviews</text><text x="102" y="514" class="small">Web UI</text>
+
+    <rect x="375" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <rect x="395" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="408" y="424" class="tag green">IMPLEMENTED</text>
+    <text x="397" y="462" class="head">FastAPI server</text><text x="397" y="491" class="body">Data, checks, drafts</text><text x="397" y="514" class="small">Approval endpoints</text>
+
+    <rect x="705" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
+    <rect x="725" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="738" y="424" class="tag green">CLI EXISTS</text>
+    <text x="727" y="462" class="head">LangGraph</text><text x="727" y="491" class="body">Plans tool-based reasoning</text><text x="727" y="514" class="small">API invocation is pending</text>
+
+    <rect x="1035" y="389" width="255" height="139" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <rect x="1055" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="1068" y="424" class="tag green">IMPLEMENTED</text>
+    <text x="1057" y="462" class="head">Python tools</text><text x="1057" y="491" class="body">Rules + policy retrieval</text><text x="1057" y="514" class="small">Validated tool inputs</text>
+
+    <rect x="1360" y="389" width="160" height="139" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <rect x="1376" y="407" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="1389" y="424" class="tag green">IMPLEMENTED</text>
+    <text x="1378" y="462" class="head">PostgreSQL</text><text x="1378" y="491" class="body">Jobs · evidence</text><text x="1378" y="514" class="small">Policies · drafts</text>
+  </g>
+  <path class="arrow" d="M316 458h50"/>
+  <path class="planned" d="M636 458h59"/>
+  <path class="arrow" d="M966 458h59"/>
+  <path class="arrow" d="M1296 458h54"/>
+
+  <rect x="705" y="548" width="585" height="62" rx="14" fill="#f2edfc" stroke="#d4c9ee" stroke-width="1.5"/>
+  <text x="727" y="575" class="tag" fill="#674aa2">LANGGRAPH HARNESS</text>
+  <text x="727" y="596" class="small">Typed state · tool allowlist · citation checks · no direct side effects</text>
+  <path d="M832 530v14" fill="none" stroke="#8e73bd" stroke-width="2" stroke-dasharray="4 4"/>
+
+  <rect x="82" y="637" width="1436" height="1.5" fill="#dce4ec"/>
+  <text x="84" y="680" class="lane">02 · APPROVE, EXECUTE, REPORT</text>
+  <text x="84" y="704" class="small">The server owns authorization; n8n handles delivery only after approval.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="749" width="250" height="140" rx="17" fill="#fff" stroke="#e2c76e" stroke-width="2"/>
+    <rect x="100" y="767" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="113" y="784" class="tag green">DRAFT EXISTS</text>
+    <text x="102" y="825" class="head">Manager review</text><text x="102" y="854" class="body">Approve exact recipient</text><text x="102" y="876" class="small">and message text</text>
+
+    <rect x="395" y="749" width="280" height="140" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <rect x="415" y="767" width="97" height="24" rx="12" fill="#e8f4ec"/><text x="428" y="784" class="tag green">CHECK EXISTS</text>
+    <text x="417" y="825" class="head">Server gate</text><text x="417" y="854" class="body">Verify approved fingerprint</text><text x="417" y="876" class="small">Send endpoint not yet connected</text>
+
+    <rect x="740" y="749" width="270" height="140" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <rect x="760" y="767" width="97" height="24" rx="12" fill="#fff2d7"/><text x="773" y="784" class="tag amber">WORKFLOW EXISTS</text>
+    <text x="762" y="825" class="head">n8n webhook</text><text x="762" y="854" class="body">Guarded test-recipient send</text><text x="762" y="876" class="small">Server call still to add</text>
+
+    <rect x="1075" y="749" width="190" height="140" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <rect x="1095" y="767" width="97" height="24" rx="12" fill="#fff2d7"/><text x="1108" y="784" class="tag amber">TEST ONLY</text>
+    <text x="1097" y="825" class="head">Email inbox</text><text x="1097" y="854" class="body">SMTP destination</text><text x="1097" y="876" class="small">No real recipients</text>
+
+    <rect x="1330" y="749" width="190" height="140" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <rect x="1350" y="767" width="112" height="24" rx="12" fill="#fff2d7"/><text x="1363" y="784" class="tag amber">TO CONNECT</text>
+    <text x="1352" y="825" class="head">Outcome</text><text x="1352" y="854" class="body">n8n → server → UI</text><text x="1352" y="876" class="small">Persist and display status</text>
+  </g>
+  <path class="arrow" d="M600 529 V731 H205 V742"/>
+  <path class="planned" d="M336 819h52"/>
+  <path class="planned" d="M681 819h52"/>
+  <path class="arrow" d="M1016 819h52"/>
+  <path class="planned" d="M1271 819h52"/>
+  <path class="feedback" d="M1425 899v48H535v-48"/>
+  <text x="700" y="937" class="small green">Delivery result returns to the server; UI reports only confirmed outcomes</text>
+
+  <rect x="80" y="970" width="1440" height="82" rx="15" fill="#fff" stroke="#dbe4ed"/>
+  <path d="M108 1007h65" class="arrow"/><text x="187" y="1012" class="small">Implemented capability</text>
+  <path d="M386 1007h65" class="planned"/><text x="465" y="1012" class="small">Planned connection</text>
+  <text x="745" y="1002" class="tag amber">BEFORE PRODUCTION</text>
+  <text x="745" y="1026" class="small">Real authentication · scoped service credentials · idempotency · audit/recovery · verified delivery</text>
+  <text x="1490" y="1080" text-anchor="end" class="small">Synthetic data · integration work remains · not a deployed production service</text>
+</svg>

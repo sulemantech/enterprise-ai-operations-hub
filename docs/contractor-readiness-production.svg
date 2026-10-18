@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500" role="img" aria-labelledby="title description">
+  <title id="title">Human governed enterprise AI operations</title>
+  <desc id="description">A production target architecture for contractor evidence review. A manager uses a secure API and a LangGraph agent with an explicit harness. The agent may call allowlisted tools backed by deterministic Python rules and PostgreSQL. A human reviews and approves the exact follow-up. The API enforces approval before handing the action to an authenticated n8n worker, which sends it and records a delivery result. Identity, validation, audit, and recovery guardrails span the flow.</desc>
+  <defs>
+    <pattern id="paper" width="26" height="26" patternUnits="userSpaceOnUse"><circle cx="3" cy="4" r=".7" fill="#d7d5cd" opacity=".28"/></pattern>
+    <filter id="shadow" x="-.12" y="-.12" width="1.24" height="1.32"><feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#1d2c43" flood-opacity=".12"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 L10 6 L2 10" fill="none" stroke="#49617a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="greenArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 L10 6 L2 10" fill="none" stroke="#31875d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text { font-family:'Segoe Print','Bradley Hand','Comic Sans MS',cursive,sans-serif; fill:#182c45 }
+      .title { font-size:42px; font-weight:700 }
+      .subtitle { font-size:21px; fill:#65758a }
+      .stage { font-size:17px; font-weight:700; letter-spacing:2.5px; fill:#728095 }
+      .cardTitle { font-size:22px; font-weight:700 }
+      .cardText { font-size:17px; fill:#53637a }
+      .tiny { font-size:15px; fill:#65758a }
+      .white { fill:#fff }
+      .gold { fill:#edc24f }
+      .card { stroke-width:2.5; stroke-linejoin:round }
+      .arrow { fill:none; stroke:#49617a; stroke-width:3; stroke-linecap:round; marker-end:url(#arrow) }
+      .greenArrow { fill:none; stroke:#31875d; stroke-width:3.5; stroke-linecap:round; marker-end:url(#greenArrow) }
+    </style>
+  </defs>
+  <rect width="1200" height="1500" fill="#fff"/>
+  <ellipse cx="600" cy="1417" rx="465" ry="18" fill="#122039" opacity=".08"/>
+  <g filter="url(#shadow)">
+    <rect x="42" y="44" width="1116" height="1350" rx="31" fill="#333633"/>
+    <rect x="54" y="56" width="1092" height="1326" rx="24" fill="#ededeb" stroke="#c0c2be" stroke-width="4"/>
+    <rect x="78" y="80" width="1044" height="1278" rx="14" fill="#fffefa" stroke="#353938" stroke-width="4"/>
+    <rect x="85" y="87" width="1030" height="1264" rx="12" fill="url(#paper)"/>
+    <path d="M60 60 H157 M1042 60 H1140 M60 1378 H157 M1042 1378 H1140" stroke="#181b19" stroke-width="14" stroke-linecap="round"/>
+  </g>
+
+  <path d="M136 128 Q232 134 325 127" fill="none" stroke="#e4b63e" stroke-width="6" stroke-linecap="round"/>
+  <text x="136" y="184" class="title">Human-governed AI operations</text>
+  <text x="138" y="219" class="subtitle">Contractor evidence · accountable follow-up</text>
+  <g transform="translate(892 127) rotate(2)"><rect width="171" height="50" rx="10" fill="#e9f3ff" stroke="#4688c3" stroke-width="2.5"/><text x="20" y="32" font-size="17" font-weight="700" fill="#367bb1">TARGET FLOW</text></g>
+
+  <text x="136" y="278" class="stage">01 · INVESTIGATE</text>
+
+  <g filter="url(#shadow)">
+    <path class="card" d="M136 316 Q143 310 153 314 L316 312 Q325 317 322 328 L322 462 Q319 474 308 472 L146 474 Q136 470 138 460 Z" fill="#fff3d5" stroke="#d7a331"/>
+    <circle cx="230" cy="350" r="13" fill="none" stroke="#c68a23" stroke-width="3.5"/>
+    <path d="M205 399 Q209 371 230 370 Q251 371 255 399 M230 371 V394 M230 382 L215 398 M230 382 L245 398" fill="none" stroke="#c68a23" stroke-width="3.5" stroke-linecap="round"/>
+    <text x="230" y="427" text-anchor="middle" class="cardTitle">Manager</text>
+    <text x="230" y="451" text-anchor="middle" class="cardText">asks about a job</text>
+
+    <path class="card" d="M391 316 Q398 310 408 314 L571 312 Q580 317 577 328 L577 462 Q574 474 563 472 L401 474 Q391 470 393 460 Z" fill="#eaf4ff" stroke="#4389c4"/>
+    <path d="M462 340 Q462 335 468 335 H499 L511 347 V382 Q511 388 505 388 H468 Q462 388 462 382 Z M499 335 V348 H511 M474 360 H498 M474 375 H498" fill="none" stroke="#4389c4" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="484" y="421" text-anchor="middle" class="cardTitle">Secure API</text>
+    <text x="484" y="451" text-anchor="middle" class="cardText">identity · tenant</text>
+
+    <path class="card" d="M646 316 Q653 310 663 314 L826 312 Q835 317 832 328 L832 462 Q829 474 818 472 L656 474 Q646 470 648 460 Z" fill="#f2ebff" stroke="#9168c3"/>
+    <path d="M711 341 Q711 333 719 333 H754 Q762 333 762 341 V365 Q762 373 754 373 H738 L725 384 V373 H719 Q711 373 711 365 Z M719 349 H754 M719 359 H747" fill="none" stroke="#8963b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="739" y="417" text-anchor="middle" class="cardTitle">LangGraph</text>
+    <text x="739" y="451" text-anchor="middle" class="cardText">bounded agent tools</text>
+
+    <path class="card" d="M901 316 Q908 310 918 314 L1081 312 Q1090 317 1087 328 L1087 462 Q1084 474 1073 472 L911 474 Q901 470 903 460 Z" fill="#eaf5eb" stroke="#438c60"/>
+    <path d="M994 338 L1015 350 V374 L994 386 L973 374 V350 Z M985 359 H1003 M985 368 H1000" fill="none" stroke="#438c60" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="994" y="417" text-anchor="middle" class="cardTitle">Tools</text>
+    <text x="994" y="451" text-anchor="middle" class="cardText">rules · database</text>
+  </g>
+
+  <path class="arrow" d="M328 380 C348 368 366 368 384 380"/>
+  <path class="arrow" d="M583 380 C603 368 621 368 639 380"/>
+  <path class="arrow" d="M838 380 C858 368 876 368 894 380"/>
+
+  <path d="M137 515 Q143 508 154 511 L581 510 Q591 516 588 528 L588 612 Q585 623 574 620 L147 622 Q137 618 139 608 Z" fill="#f8f4ff" stroke="#a58bc7" stroke-width="2.5"/>
+  <text x="164" y="551" font-size="18" font-weight="700" fill="#7655a4">HARNESS · LangGraph controls</text>
+  <text x="164" y="586" class="cardText">Typed state - tool allowlist</text>
+  <text x="164" y="614" class="tiny">AI explains results; application rules stay authoritative.</text>
+
+  <path d="M652 474 C638 490 619 500 589 526" fill="none" stroke="#9168c3" stroke-width="2.5" stroke-dasharray="5 5"/>
+  <g filter="url(#shadow)">
+    <path class="card" d="M391 667 Q398 661 408 665 L816 663 Q826 668 823 679 L823 777 Q820 786 809 783 L401 785 Q391 781 393 771 Z" fill="#fff" stroke="#718097"/>
+    <path d="M426 695 L445 706 V728 L426 739 L407 728 V706 Z M417 713 H435 M417 721 H432" fill="none" stroke="#438c60" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="462" y="706" class="cardTitle">Evidence-backed result</text>
+    <text x="462" y="737" class="cardText">Rules decide status; sources support</text>
+    <text x="462" y="764" class="tiny">the explanation returned to the manager.</text>
+  </g>
+  <path class="arrow" d="M994 474 C975 542 881 610 785 662"/>
+  <path class="greenArrow" d="M398 780 C360 802 197 797 118 817 L118 946 C118 951 124 953 132 953"/>
+
+  <text x="136" y="837" class="stage">02 · ACT WITH APPROVAL</text>
+  <g filter="url(#shadow)">
+    <path class="card" d="M136 872 Q143 866 153 870 L339 868 Q348 873 345 884 L345 1017 Q342 1026 331 1023 L146 1025 Q136 1021 138 1011 Z" fill="#eaf4ff" stroke="#4389c4"/>
+    <path d="M220 894 Q220 889 226 889 H251 L261 899 V925 Q261 930 256 930 H226 Q220 930 220 925 Z M251 889 V900 H261 M231 910 H251 M231 920 H248" fill="none" stroke="#4389c4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="240" y="959" text-anchor="middle" class="cardTitle">Draft</text>
+    <text x="240" y="983" text-anchor="middle" class="cardText">recipient · message</text>
+    <text x="240" y="1008" text-anchor="middle" class="tiny">saved, still unsent</text>
+
+    <path class="card" d="M391 872 Q398 866 408 870 L594 868 Q603 873 600 884 L600 1017 Q597 1026 586 1023 L401 1025 Q391 1021 393 1011 Z" fill="#fff3d5" stroke="#d7a331"/>
+    <circle cx="496" cy="908" r="19" fill="#fff" stroke="#d7a331" stroke-width="3"/>
+    <path d="M487 908 L494 915 L506 900" fill="none" stroke="#c68a23" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="496" y="959" text-anchor="middle" class="cardTitle">Human review</text>
+    <text x="496" y="983" text-anchor="middle" class="cardText">approve exact text</text>
+    <text x="496" y="1008" text-anchor="middle" class="tiny">edits reset approval</text>
+
+    <path class="card" d="M646 872 Q653 866 663 870 L849 868 Q858 873 855 884 L855 1017 Q852 1026 841 1023 L656 1025 Q646 1021 648 1011 Z" fill="#edf7ee" stroke="#438c60"/>
+    <path d="M750 894 L769 905 V927 L750 938 L731 927 V905 Z M742 915 L748 921 L759 908" fill="none" stroke="#438c60" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="750" y="959" text-anchor="middle" class="cardTitle">Server gate</text>
+    <text x="750" y="983" text-anchor="middle" class="cardText">auth · approval</text>
+    <text x="750" y="1008" text-anchor="middle" class="tiny">version · idempotency</text>
+
+    <path class="card" d="M901 872 Q908 866 918 870 L1104 868 Q1113 873 1110 884 L1110 1017 Q1107 1026 1096 1023 L911 1025 Q901 1021 903 1011 Z" fill="#e9f3ff" stroke="#4389c4"/>
+    <path d="M992 895 H1018 M992 906 H1018 M992 917 H1011 M999 885 V895 M1011 917 V929 M999 929 H1019" fill="none" stroke="#4389c4" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="1005" y="959" text-anchor="middle" class="cardTitle">n8n worker</text>
+    <text x="1005" y="983" text-anchor="middle" class="cardText">authenticated send</text>
+    <text x="1005" y="1008" text-anchor="middle" class="tiny">retry · reconcile</text>
+  </g>
+  <path class="greenArrow" d="M350 943 C363 934 376 934 384 943"/>
+  <path class="greenArrow" d="M605 943 C618 934 631 934 639 943"/>
+  <path class="greenArrow" d="M860 943 C873 934 886 934 894 943"/>
+
+  <path d="M1005 1037 V1076" fill="none" stroke="#4389c4" stroke-width="3" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <g filter="url(#shadow)">
+    <g transform="translate(255 0)">
+      <path class="card" d="M646 1085 Q653 1079 663 1083 L849 1081 Q858 1086 855 1097 L855 1190 Q852 1199 841 1196 L656 1198 Q646 1194 648 1184 Z" fill="#fff" stroke="#4389c4"/>
+      <rect x="675" y="1110" width="48" height="36" rx="5" fill="none" stroke="#4389c4" stroke-width="3"/>
+      <path d="M677 1113 L699 1130 L721 1113" fill="none" stroke="#4389c4" stroke-width="3" stroke-linejoin="round"/>
+      <text x="747" y="1119" class="cardTitle">Email</text>
+      <text x="747" y="1150" class="cardText">provider</text>
+      <text x="747" y="1181" class="tiny">audit status</text>
+    </g>
+  </g>
+
+  <path d="M136 1243 Q142 1236 154 1239 L1068 1237 Q1079 1243 1076 1255 L1075 1310 Q1072 1321 1061 1317 L146 1319 Q136 1315 138 1305 Z" fill="#192d47" stroke="#192d47" stroke-width="2"/>
+  <path d="M167 1260 L183 1266 V1282 Q179 1293 167 1299 Q155 1293 151 1282 V1266 Z" fill="none" stroke="#edc24f" stroke-width="3"/>
+  <path d="M160 1280 L166 1286 L176 1274" fill="none" stroke="#edc24f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="207" y="1270" font-size="18" font-weight="700" class="gold">GUARDRAILS</text>
+  <text x="207" y="1300" font-size="16" class="white">Identity + tenant</text>
+  <circle cx="363" cy="1294" r="3" fill="#edc24f"/>
+  <text x="378" y="1300" font-size="16" class="white">Tool + data limits</text>
+  <circle cx="538" cy="1294" r="3" fill="#edc24f"/>
+  <text x="553" y="1300" font-size="16" class="white">Human authorization</text>
+  <circle cx="749" cy="1294" r="3" fill="#edc24f"/>
+  <text x="764" y="1300" font-size="16" class="white">Audit + recovery</text>
+  <text x="1070" y="1350" text-anchor="end" font-size="14" fill="#65758a">Production target architecture</text>
+</svg>
