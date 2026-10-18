@@ -12,10 +12,10 @@ FocusIMS already describes contractor-document management. Our proposed contribu
 
 ### Current capabilities
 
-- Implemented: readiness rules, PostgreSQL records, API/browser results and a separate CLI AI workflow using validated tools and LangGraph.
+- Implemented: readiness rules, PostgreSQL records, API/browser assessments, a separate LangGraph CLI with policy retrieval and citation checks, and saved follow-up drafts with exact-text approval records.
 - Manually demonstrated: JOB-102 explanation, missing job-ID clarification and unknown-job handling.
-- Next: versioned company-procedure retrieval and citations.
-- Planned: follow-up drafts, server-enforced approval, n8n test-inbox delivery and production controls.
+- Still to connect: browser/API to LangGraph, and the post-approval server gate to the n8n webhook and delivery-status handling.
+- Before production: real authentication, tenant authorization, idempotent execution, reliable delivery reconciliation, audit and recovery controls.
 
 The CLI graph is not yet connected to the browser. Document readiness is not an ISO compliance verdict or permission to commence work.
 
@@ -27,11 +27,19 @@ See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG co
 
 The diagram shows the complete target journey. The React app, FastAPI, Python checks, PostgreSQL, LangGraph CLI, draft approval records, and n8n test workflow exist, but the API-to-LangGraph and approval-gated API-to-n8n connections still need wiring. This is a project in progress, not a deployed production service or a real customer integration. [Open the SVG](docs/end-to-end-connected-architecture.svg).
 
+### Component flows
+
+The [LangGraph + AI diagram](docs/langgraph-ai-flow.svg) details tool routing, deterministic checks, policy retrieval and citation validation. The [n8n diagram](docs/n8n-followup-workflow.svg) shows its authenticated webhook, test-recipient guard, SMTP step and response branches. Both distinguish existing workflow logic from connections still to build.
+
+![LangGraph and AI reasoning flow](docs/langgraph-ai-flow.png)
+
+![n8n guarded follow-up workflow](docs/n8n-followup-workflow.png)
+
 See the [animated workflow GIF](docs/contractor-readiness-workflow.gif) and [LinkedIn architecture image](docs/contractor-readiness-production-linkedin.png) for additional visuals.
 
 ## Our example
 
-A manager checks fictional jobs and sees which contractors have missing documents. The planned complete journey adds procedure citations and approved follow-ups to a test inbox. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
+A manager checks fictional jobs and sees which contractors have missing documents. A separate CLI can explain a result with matching procedure passages; saved follow-up drafts can be reviewed and approved. The API-to-LangGraph and approval-gated n8n delivery connections remain to be built. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
 
 We use invented data inspired by the FocusIMS business domain. This is an independent learning project; its value to that client is still unvalidated.
 
@@ -73,9 +81,11 @@ npm run dev
 
 Open http://localhost:5173.
 
-## How we will build it
+## Integration roadmap
 
-Python rules -> FastAPI -> PostgreSQL -> React -> LLM -> LangGraph -> RAG -> n8n -> complete demo.
+Current: React -> FastAPI -> Python rules + PostgreSQL; separate CLI -> LangGraph -> tools + policy retrieval.
+
+Next: FastAPI -> LangGraph; after human approval, FastAPI -> n8n -> test inbox -> recorded delivery outcome.
 
 Each addition solves a problem you can already see. We will explain the code, run it, and change an example to understand its behavior before adding the next technology.
 
@@ -83,7 +93,7 @@ Each addition solves a problem you can already see. We will explain the code, ru
 
 Prioritise understanding and small working changes. Explain unfamiliar terms when they first appear. Teach only what the current step needs. Ask one short understanding question after a demonstration; avoid long homework lists. Discuss meaningful architecture changes, and keep documentation short.
 
-The first end-to-end version runs locally with synthetic records and captured test email. Authentication, durable approvals, recovery, and deployment follow in a separate production preparation phase. Public deployment and real recipients require those controls first.
+The app uses synthetic records, and the n8n workflow is restricted to test recipients. The browser-to-LangGraph and server-to-n8n paths are not connected end-to-end yet. Public deployment and real recipients require authentication, approval-gated execution, durable audit and recovery controls first.
 
 ## Optional references
 

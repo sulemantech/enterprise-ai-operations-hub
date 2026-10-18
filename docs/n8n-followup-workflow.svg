@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">n8n approved follow-up workflow</title>
+  <desc id="desc">Defined n8n workflow with header-authenticated POST webhook, recipient allowlist, SMTP email send for permitted test addresses, sent JSON response, and 422 rejection for other recipients. The application server is not yet connected.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#60758b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="futureArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#3979c3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="rejectArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#b84552" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.title{font-size:39px;font-weight:750}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:20px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.amber{fill:#8d6412}.green{fill:#27835d}.red{fill:#b84552}.white{fill:#fff}.gold{fill:#f2c45c}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.planned{fill:none;stroke:#3979c3;stroke-width:3;stroke-dasharray:9 8;stroke-linecap:round;marker-end:url(#futureArrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#f4f7fb"/><circle cx="1480" cy="75" r="190" fill="#e8f1fb" opacity=".65"/>
+  <text x="78" y="69" class="eyebrow">N8N · APPROVED FOLLOW-UP DELIVERY</text>
+  <text x="78" y="125" class="title">A guarded test-send workflow</text>
+  <text x="80" y="160" class="sub">The workflow is configured; the application server still needs to call it after approval.</text>
+  <rect x="1285" y="64" width="235" height="42" rx="21" fill="#fff3d8" stroke="#e9c46a"/><text x="1311" y="90" class="tag amber">TEST DESTINATION ONLY</text>
+
+  <text x="84" y="239" class="lane">ALLOWED PATH · ONLY THE TEST RECIPIENT PASSES</text>
+  <g filter="url(#shadow)">
+    <rect x="75" y="290" width="205" height="146" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <text x="97" y="325" class="tag" fill="#3979c3">APPLICATION SERVER</text><text x="97" y="364" class="head">Approved payload</text><text x="97" y="394" class="body">Exact recipient + text</text><text x="97" y="418" class="small">Webhook call pending</text>
+
+    <rect x="340" y="290" width="250" height="146" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <text x="362" y="325" class="tag" fill="#3979c3">WEBHOOK · POST</text><text x="362" y="364" class="head">/followup-send</text><text x="362" y="394" class="body">Header authentication</text><text x="362" y="418" class="small">Receives request body</text>
+
+    <path d="M731 284 850 363 731 442 612 363Z" fill="#fff7e7" stroke="#d4a846" stroke-width="2.5"/>
+    <text x="731" y="352" text-anchor="middle" class="tag amber">RECIPIENT</text><text x="731" y="374" text-anchor="middle" class="tag amber">ALLOWLIST</text><text x="731" y="396" text-anchor="middle" class="small">@example.invalid</text>
+
+    <rect x="900" y="290" width="260" height="146" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <text x="922" y="325" class="tag green">IF ALLOWED · YES</text><text x="922" y="364" class="head">SMTP email node</text><text x="922" y="394" class="body">Uses configured credentials</text><text x="922" y="418" class="small">Text subject + body</text>
+
+    <rect x="1230" y="290" width="285" height="146" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <text x="1252" y="325" class="tag green">WEBHOOK RESPONSE</text><text x="1252" y="364" class="head">JSON status: sent</text><text x="1252" y="394" class="body">Returned after SMTP step</text><text x="1252" y="418" class="small">Not proof the email was received</text>
+
+    <rect x="610" y="575" width="245" height="130" rx="17" fill="#fff" stroke="#e3a6ad" stroke-width="2"/>
+    <text x="632" y="610" class="tag red">IF NOT ALLOWED · NO</text><text x="632" y="649" class="head">Reject request</text><text x="632" y="679" class="body">HTTP 422 · recipient blocked</text>
+  </g>
+  <path class="planned" d="M286 363h47"/><path class="arrow" d="M596 363h10"/><path class="arrow" d="M855 363h37"/><path class="arrow" d="M1166 363h57"/>
+  <text x="861" y="342" class="small green">yes</text>
+  <path d="M731 446v121" fill="none" stroke="#b84552" stroke-width="2.5" stroke-linecap="round" marker-end="url(#rejectArrow)"/>
+  <text x="746" y="516" class="small red">no</text>
+
+  <rect x="78" y="763" width="1444" height="86" rx="16" fill="#182d49"/>
+  <text x="108" y="798" font-size="14" font-weight="750" letter-spacing="1.5" class="gold">SAFETY + STATUS NOTES</text>
+  <text x="108" y="827" font-size="15" class="white">The API must verify approval before calling n8n.</text>
+  <circle cx="510" cy="822" r="3" fill="#f2c45c"/><text x="528" y="827" font-size="15" class="white">Server-to-webhook call is not wired yet.</text>
+  <circle cx="898" cy="822" r="3" fill="#f2c45c"/><text x="916" y="827" font-size="15" class="white">SMTP acceptance is not delivery confirmation.</text>
+  <text x="1512" y="879" text-anchor="end" class="small">Workflow definition: n8n/followup-send.json · use only with test credentials and recipients.</text>
+</svg>

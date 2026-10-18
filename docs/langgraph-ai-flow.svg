@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">LangGraph and AI reasoning flow</title>
+  <desc id="desc">Current CLI graph: an LLM decides whether to call the assessment tool. Tool calls execute deterministic assessment, retrieve matching policy passages, and request a grounded explanation that passes citation validation or falls back to rule facts.</desc>
+  <defs>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#60758b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="purpleArrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#7958ad" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <style>
+      text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#172b45}.eyebrow{font-size:15px;font-weight:750;letter-spacing:3px;fill:#4b78a8}.title{font-size:39px;font-weight:750}.sub{font-size:18px;fill:#64748b}.lane{font-size:15px;font-weight:750;letter-spacing:2px;fill:#718096}.head{font-size:20px;font-weight:720}.body{font-size:15px;fill:#52647a}.small{font-size:13px;fill:#64748b}.tag{font-size:11px;font-weight:750;letter-spacing:.8px}.white{fill:#fff}.gold{fill:#f2c45c}.amber{fill:#8d6412}.arrow{fill:none;stroke:#60758b;stroke-width:3;stroke-linecap:round;marker-end:url(#arrow)}.purple{fill:none;stroke:#7958ad;stroke-width:3;stroke-linecap:round;marker-end:url(#purpleArrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="#f4f7fb"/><circle cx="1500" cy="70" r="190" fill="#eee8fa" opacity=".7"/>
+  <text x="78" y="69" class="eyebrow">LANGGRAPH · AI REASONING</text>
+  <text x="78" y="125" class="title">Grounded assessment, not autonomous action</text>
+  <text x="80" y="160" class="sub">Current CLI flow · the API-to-LangGraph connection is still to be built</text>
+  <rect x="1275" y="64" width="245" height="42" rx="21" fill="#e8f4ec" stroke="#a7d1b5"/><text x="1301" y="90" class="tag" fill="#27835d">GRAPH IMPLEMENTED</text>
+
+  <text x="84" y="218" class="lane">01 · REQUEST AND ROUTE</text>
+  <g filter="url(#shadow)">
+    <rect x="80" y="250" width="225" height="142" rx="17" fill="#fff" stroke="#e2c76e" stroke-width="2"/>
+    <text x="104" y="285" class="tag amber">INPUT</text><text x="104" y="322" class="head">Manager question</text><text x="104" y="352" class="body">“Why is JOB-102 blocked?”</text><text x="104" y="376" class="small">Question + graph state</text>
+
+    <rect x="350" y="250" width="280" height="142" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
+    <text x="374" y="285" class="tag" fill="#674aa2">LLM CALL 1 · ROUTER</text><text x="374" y="322" class="head">Request assessment</text><text x="374" y="352" class="body">May request one allowlisted tool</text><text x="374" y="376" class="small">or ask for a missing job ID</text>
+
+    <path d="M755 257 840 321 755 385 670 321Z" fill="#f2edfc" stroke="#9d83c9" stroke-width="2.5"/>
+    <text x="755" y="315" text-anchor="middle" class="tag" fill="#674aa2">TOOL</text><text x="755" y="337" text-anchor="middle" class="tag" fill="#674aa2">REQUESTED?</text>
+
+    <rect x="880" y="250" width="250" height="142" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
+    <text x="904" y="285" class="tag" fill="#674aa2">LANGGRAPH NODE</text><text x="904" y="322" class="head">Run tool</text><text x="904" y="352" class="body">get_job_assessment</text><text x="904" y="376" class="small">Validate args · execute tool</text>
+
+    <rect x="1180" y="250" width="340" height="142" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <text x="1204" y="285" class="tag" fill="#27835d">AUTHORITATIVE FACTS</text><text x="1204" y="322" class="head">Python + PostgreSQL</text><text x="1204" y="352" class="body">Rules decide status and reason</text><text x="1204" y="376" class="small">LLM cannot override the result</text>
+  </g>
+  <path class="arrow" d="M311 321h29"/><path class="purple" d="M636 321h24"/><path class="purple" d="M852 321h22"/><path class="arrow" d="M1136 321h34"/>
+  <path d="M755 390v40" fill="none" stroke="#60758b" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="638" y="438" width="234" height="58" rx="13" fill="#fff" stroke="#d8e1eb"/>
+  <text x="658" y="462" class="tag">NO TOOL REQUEST</text><text x="658" y="483" class="small">Clarify or return direct answer</text>
+
+  <rect x="80" y="528" width="1440" height="1.5" fill="#dce4ec"/>
+  <text x="84" y="568" class="lane">02 · RETRIEVE, EXPLAIN, VALIDATE</text>
+  <g filter="url(#shadow)">
+    <rect x="1210" y="600" width="310" height="142" rx="17" fill="#fff" stroke="#a7d1b5" stroke-width="2"/>
+    <text x="1234" y="635" class="tag" fill="#27835d">MATCHED SOURCES ONLY</text><text x="1234" y="672" class="head">Policy retrieval</text><text x="1234" y="702" class="body">Version + tenant filtered search</text><text x="1234" y="726" class="small">pgvector · up to 3 passages</text>
+
+    <rect x="870" y="600" width="260" height="142" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
+    <text x="894" y="635" class="tag" fill="#674aa2">LLM CALL 2 · EXPLAINER</text><text x="894" y="672" class="head">Grounded answer</text><text x="894" y="702" class="body">Facts + supplied passages</text><text x="894" y="726" class="small">No tool calls in this step</text>
+
+    <rect x="510" y="600" width="280" height="142" rx="17" fill="#fff" stroke="#cbb8eb" stroke-width="2"/>
+    <text x="534" y="635" class="tag" fill="#674aa2">CITATION GUARD</text><text x="534" y="672" class="head">Validate citations</text><text x="534" y="702" class="body">Check against retrieved set</text><text x="534" y="726" class="small">Unsupported citations rejected</text>
+
+    <rect x="80" y="600" width="335" height="142" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
+    <text x="104" y="635" class="tag" fill="#3979c3">OUTPUT</text><text x="104" y="672" class="head">Answer to CLI</text><text x="104" y="702" class="body">Concise evidence-led explanation</text><text x="104" y="726" class="small">or safe rule-fact fallback</text>
+  </g>
+  <path class="arrow" d="M1365 394v194"/><path class="arrow" d="M1204 671h-67"/><path class="purple" d="M866 671h-68"/><path class="arrow" d="M506 671h-85"/>
+
+  <rect x="80" y="790" width="1440" height="112" rx="17" fill="#182d49"/>
+  <text x="108" y="826" font-size="14" font-weight="750" letter-spacing="1.5" class="gold">AI HARNESS + GUARDRAILS</text>
+  <text x="108" y="859" font-size="16" class="white">Tool allowlist</text><circle cx="239" cy="854" r="3" fill="#f2c45c"/><text x="257" y="859" font-size="16" class="white">Validated inputs</text><circle cx="396" cy="854" r="3" fill="#f2c45c"/><text x="414" y="859" font-size="16" class="white">Rules authoritative</text><circle cx="592" cy="854" r="3" fill="#f2c45c"/><text x="610" y="859" font-size="16" class="white">Retrieved text is untrusted context</text><circle cx="922" cy="854" r="3" fill="#f2c45c"/><text x="940" y="859" font-size="16" class="white">Invalid citations fall back to status + reason</text>
+  <text x="1510" y="949" text-anchor="end" class="small">LangGraph currently runs as a separate CLI flow; no email sending occurs in this graph.</text>
+</svg>
