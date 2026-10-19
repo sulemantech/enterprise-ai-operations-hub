@@ -1,6 +1,6 @@
 ﻿# Simple architecture
 
-Status: rules, database, API/browser and separate CLI LangGraph workflow implemented. JOB-102, missing-ID and unknown-job CLI paths were manually demonstrated. Retrieval, approval and delivery remain planned.
+Status: rules, database, API/browser, and FastAPI-connected LangGraph explanations with tenant-scoped tools are implemented. JOB-102, missing-ID and unknown-job graph paths were manually demonstrated. Approval-gated n8n delivery remains planned.
 
 ## What are we building?
 
@@ -10,8 +10,9 @@ A manager investigates contractor evidence in the FocusIMS supplier-management b
 
 ```text
 Browser -> FastAPI -> repository + readiness rules -> PostgreSQL facts
-CLI question -> LangGraph -> assessment service -> repository + readiness rules
-                         -> model explanation
+Browser -> FastAPI -> LangGraph -> tenant-scoped tools -> PostgreSQL facts
+                              -> policy retrieval -> model explanation
+CLI question -> LangGraph (ORG-DEMO local workflow)
 Next: matching procedure passages -> cited explanation
 ```
 

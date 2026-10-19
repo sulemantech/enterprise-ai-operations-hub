@@ -50,7 +50,7 @@ After the local flow is understood, use these as the next learning sessions. Re-
 
 | Order | Topic | Evidence required |
 | --- | --- | --- |
-| 1 | Real authentication and role/record permissions | Anonymous and out-of-scope actions fail |
+| 1 | Managed OIDC authentication and role/record permissions | Hellō login and role checks work; local membership is manually provisioned; admin provisioning remains |
 | 2 | Durable approvals and graph state | Restart preserves pending approval; expiry and stale evidence are handled |
 | 3 | Duplicate prevention and partial failures | Retry creates no duplicate task; uncertain email outcome is reconciled before resend |
 | 4 | Audit, limits, and secret handling | Trace an action; enforce request/cost limits; no credentials leak |
@@ -93,6 +93,8 @@ The local learning demo uses only synthetic records and a capture inbox. Do not 
 - [x] Session 16: `approval.py` records approvals in `followup_approvals` (migration `0004`): who, when, a copy of the exact recipient/subject/body and its SHA-256 fingerprint. `authorise_execution` refuses unapproved drafts, drafts edited after approval and text changed outside the API. `POST /followups/{id}/approve` and an Approve button. Approval expiry and evidence-freshness checks are deferred. Fast-tracked at the learner's request.
 
 Focus from here: n8n and the test inbox. LLM provider: Claude (Anthropic API).
+
+Production preparation has begun separately from the learning demo. Hellō authorization-code login with PKCE and API membership/role checks are wired; audited provisioning, CSRF protection, and full tenant-data isolation remain open. See [Hellō authentication setup](docs/authentication.md).
 
 ## Next session: Session 17, n8n and test inbox
 

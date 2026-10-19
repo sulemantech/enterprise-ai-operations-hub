@@ -12,7 +12,7 @@ Primary use: a FocusIMS-context operations manager investigating contractor evid
 
 | Question | Source | Availability |
 | --- | --- | --- |
-| Why is JOB-102 blocked? | Job, documents, policy and rule result | CLI graph implemented and demonstrated |
+| Why is JOB-102 blocked? | Job, documents, policy and rule result | FastAPI-connected LangGraph explanation with authenticated organisation scope |
 | Is JOB-101 ready under these checks? | Operational assessment | Existing tool capability |
 | Is the job ready? | Job ID clarification | Demonstrated |
 | Is JOB-9999 ready? | Job lookup | Missing-job handling demonstrated |

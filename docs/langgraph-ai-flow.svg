@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
   <title id="title">LangGraph and AI reasoning flow</title>
-  <desc id="desc">Current CLI graph: an LLM decides whether to call the assessment tool. Tool calls execute deterministic assessment, retrieve matching policy passages, and request a grounded explanation that passes citation validation or falls back to rule facts.</desc>
+  <desc id="desc">LangGraph explanation flow called by FastAPI with the authenticated organisation ID. The model may call an assessment tool; the server scopes the deterministic assessment to that organisation, retrieves relevant policy passages, and validates citations in the explanation.</desc>
   <defs>
     <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#60758b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
@@ -57,5 +57,5 @@
   <rect x="80" y="790" width="1440" height="112" rx="17" fill="#182d49"/>
   <text x="108" y="826" font-size="14" font-weight="750" letter-spacing="1.5" class="gold">AI HARNESS + GUARDRAILS</text>
   <text x="108" y="859" font-size="16" class="white">Tool allowlist</text><circle cx="239" cy="854" r="3" fill="#f2c45c"/><text x="257" y="859" font-size="16" class="white">Validated inputs</text><circle cx="396" cy="854" r="3" fill="#f2c45c"/><text x="414" y="859" font-size="16" class="white">Rules authoritative</text><circle cx="592" cy="854" r="3" fill="#f2c45c"/><text x="610" y="859" font-size="16" class="white">Retrieved text is untrusted context</text><circle cx="922" cy="854" r="3" fill="#f2c45c"/><text x="940" y="859" font-size="16" class="white">Invalid citations fall back to status + reason</text>
-  <text x="1510" y="949" text-anchor="end" class="small">LangGraph currently runs as a separate CLI flow; no email sending occurs in this graph.</text>
+  <text x="1510" y="949" text-anchor="end" class="small">FastAPI passes the authenticated organisation scope; no email sending occurs in this graph.</text>
 </svg>

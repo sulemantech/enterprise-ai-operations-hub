@@ -12,12 +12,13 @@ FocusIMS already describes contractor-document management. Our proposed contribu
 
 ### Current capabilities
 
-- Implemented: readiness rules, PostgreSQL records, API/browser assessments, a separate LangGraph CLI with policy retrieval and citation checks, and saved follow-up drafts with exact-text approval records.
+- Implemented: readiness rules, PostgreSQL records, API/browser assessments, a LangGraph explanation endpoint with policy retrieval and citation checks, a local-only demo sign-in, and saved follow-up drafts with exact-text approval records.
 - Manually demonstrated: JOB-102 explanation, missing job-ID clarification and unknown-job handling.
-- Still to connect: browser/API to LangGraph, and the post-approval server gate to the n8n webhook and delivery-status handling.
-- Before production: real authentication, tenant authorization, idempotent execution, reliable delivery reconciliation, audit and recovery controls.
+- Still to connect: the post-approval server gate to the n8n webhook and delivery-status handling.
+- Added: local-only demo access for development, plus Hellō authorization-code login with PKCE, signed FastAPI sessions, and server-side organisation membership/role checks for deployment. The local demo bypasses external identity setup and is disabled outside `APP_ENV=development`; see [authentication setup](docs/authentication.md).
+- Before production: audited user provisioning, CSRF protection, complete tenant-data isolation, idempotent execution, reliable delivery reconciliation, audit and recovery controls.
 
-The CLI graph is not yet connected to the browser. Document readiness is not an ISO compliance verdict or permission to commence work.
+The graph is called through FastAPI, which passes the organisation from the authenticated session to its tools; the separate CLI remains for local exploration. Document readiness is not an ISO compliance verdict or permission to commence work.
 
 See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG context](docs/knowledge/README.md).
 
@@ -25,7 +26,7 @@ See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG co
 
 ![End-to-end connected architecture: solid lines show working capability; dashed lines show integration work remaining](docs/end-to-end-connected-architecture.png)
 
-The diagram shows the complete target journey. The React app, FastAPI, Python checks, PostgreSQL, LangGraph CLI, draft approval records, and n8n test workflow exist, but the API-to-LangGraph and approval-gated API-to-n8n connections still need wiring. This is a project in progress, not a deployed production service or a real customer integration. [Open the SVG](docs/end-to-end-connected-architecture.svg).
+The diagram shows the complete target journey, but predates the new API-to-LangGraph explanation endpoint. The approval-gated API-to-n8n delivery connection remains to be built. This is a project in progress, not a deployed production service or a real customer integration. [Open the SVG](docs/end-to-end-connected-architecture.svg).
 
 ### Component flows
 
@@ -39,7 +40,7 @@ See the [animated workflow GIF](docs/contractor-readiness-workflow.gif) and [Lin
 
 ## Our example
 
-A manager checks fictional jobs and sees which contractors have missing documents. A separate CLI can explain a result with matching procedure passages; saved follow-up drafts can be reviewed and approved. The API-to-LangGraph and approval-gated n8n delivery connections remain to be built. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
+A manager checks fictional jobs and sees which contractors have missing documents. The app can request a LangGraph explanation with procedure passages; saved follow-up drafts can be reviewed and approved. The approval-gated n8n delivery connection remains to be built. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
 
 We use invented data inspired by the FocusIMS business domain. This is an independent learning project; its value to that client is still unvalidated.
 
@@ -67,7 +68,7 @@ python -m pytest
 fastapi dev api.py
 ```
 
-Set database credentials and the model API key in `.env`. PostgreSQL uses port 5433; API docs are at http://127.0.0.1:8000/docs. Seeding resets demo records: the default loads fixtures plus generated data; `python seed.py --small` loads only the four fixture jobs.
+Set database credentials, the model API key, and a random `SESSION_SECRET` in `.env`. In local development, open the web app and choose **Enter local demo**; Hellō setup is not required. PostgreSQL uses port 5433; API docs are at http://127.0.0.1:8000/docs. For a deployed environment, configure Hellō and provision memberships as described in [authentication setup](docs/authentication.md). Seeding resets synthetic records: the default loads fixtures plus generated data; `python seed.py --small` loads only the four fixture jobs.
 
 Run the separate graph with `python readiness_graph.py "Why is JOB-102 blocked?"`. This makes paid model requests.
 
@@ -83,9 +84,11 @@ Open http://localhost:5173.
 
 ## Integration roadmap
 
-Current: React -> FastAPI -> Python rules + PostgreSQL; separate CLI -> LangGraph -> tools + policy retrieval.
+Current: React -> FastAPI -> Python rules + PostgreSQL; FastAPI -> LangGraph -> tenant-scoped tools + policy retrieval.
 
-Next: FastAPI -> LangGraph; after human approval, FastAPI -> n8n -> test inbox -> recorded delivery outcome.
+Next: after human approval, FastAPI -> n8n -> test inbox -> recorded delivery outcome.
+
+Hellō login and the API membership boundary are wired for local development. See [Hellō setup and remaining security work](docs/authentication.md); this is not yet a public-deployment-ready service.
 
 Each addition solves a problem you can already see. We will explain the code, run it, and change an example to understand its behavior before adding the next technology.
 
@@ -93,7 +96,7 @@ Each addition solves a problem you can already see. We will explain the code, ru
 
 Prioritise understanding and small working changes. Explain unfamiliar terms when they first appear. Teach only what the current step needs. Ask one short understanding question after a demonstration; avoid long homework lists. Discuss meaningful architecture changes, and keep documentation short.
 
-The app uses synthetic records, and the n8n workflow is restricted to test recipients. The browser-to-LangGraph and server-to-n8n paths are not connected end-to-end yet. Public deployment and real recipients require authentication, approval-gated execution, durable audit and recovery controls first.
+The app uses synthetic records, and the n8n workflow is restricted to test recipients. The approval-to-n8n path is not connected end-to-end yet. Public deployment and real recipients require tenant isolation, CSRF protection, audited provisioning, approval-gated execution, durable audit and recovery controls first.
 
 ## Optional references
 
