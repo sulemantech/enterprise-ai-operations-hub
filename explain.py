@@ -109,7 +109,7 @@ def check_grounding(explanation: Explanation, facts: dict) -> list[str]:
 
 def explain_job(job_id: str) -> None:
     with get_engine().connect() as connection:
-        job = repository.get_job(connection, job_id)
+        job = repository.get_job(connection, job_id, "ORG-DEMO")
         if job is None:
             sys.exit(f"Job {job_id} not found")
         documents = repository.documents_for(connection, job["contractor_ids"])

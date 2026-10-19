@@ -5,3 +5,5 @@ alembic
 python-dotenv
 anthropic
 voyageai
+Authlib>=1.9,<2
+itsdangerous

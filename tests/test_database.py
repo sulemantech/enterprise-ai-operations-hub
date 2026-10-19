@@ -16,12 +16,12 @@ def test_unassigned_job_is_returned_and_blocked(db_connection):
         {"id": "JOB-101"},
     )
 
-    job = repository.get_job(db_connection, "JOB-101")
+    job = repository.get_job(db_connection, "JOB-101", "ORG-DEMO")
     assert job is not None
     assert job["contractor_ids"] == []
 
     jobs = repository.jobs_in_window(
-        db_connection, date(2026, 10, 5), date(2026, 10, 11)
+        db_connection, date(2026, 10, 5), date(2026, 10, 11), "ORG-DEMO"
     )
     matching_jobs = [item for item in jobs if item["id"] == "JOB-101"]
     assert len(matching_jobs) == 1
@@ -29,6 +29,13 @@ def test_unassigned_job_is_returned_and_blocked(db_connection):
 
     policy = repository.get_policy(db_connection, job["policy_id"], job["policy_version"])
     assert assess_job(job, [], policy) == ("BLOCKED", "NO_CONTRACTOR")
+
+
+def test_job_lookup_does_not_cross_organisation_boundary(db_connection):
+    assert repository.get_job(db_connection, "JOB-101", "ORG-OTHER") is None
+    assert repository.jobs_in_window(
+        db_connection, date(2026, 10, 5), date(2026, 10, 11), "ORG-OTHER"
+    ) == []
 
 
 def test_fixture_jobs_are_seeded_unchanged(db_connection):

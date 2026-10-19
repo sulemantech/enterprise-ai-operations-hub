@@ -44,6 +44,40 @@ def test_assessment_describes_the_job(client):
     }
 
 
+def test_explanation_uses_authenticated_organisation(client, monkeypatch):
+    import readiness_graph
+
+    calls = []
+
+    def fake_explanation(job_id, organisation_id):
+        calls.append((job_id, organisation_id))
+        return "JOB-102 is blocked because its insurance expires before the job ends."
+
+    monkeypatch.setattr(readiness_graph, "explain_readiness_for_job", fake_explanation)
+
+    response = client.get("/assessments/JOB-102/explanation")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "job_id": "JOB-102",
+        "answer": "JOB-102 is blocked because its insurance expires before the job ends.",
+    }
+    assert calls == [("JOB-102", "ORG-DEMO")]
+
+
+def test_explanation_rejects_unknown_job_before_calling_graph(client, monkeypatch):
+    import readiness_graph
+
+    def fail_if_called(*_args):
+        raise AssertionError("Graph must not run for an unknown job")
+
+    monkeypatch.setattr(readiness_graph, "explain_readiness_for_job", fail_if_called)
+
+    response = client.get("/assessments/JOB-999/explanation")
+
+    assert response.status_code == 404
+
+
 def test_window_includes_jobs_that_overlap_it(client):
     response = client.get("/assessments", params={"start": "2026-10-07", "end": "2026-10-07"})
 

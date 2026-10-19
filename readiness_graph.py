@@ -16,6 +16,7 @@ class ReadinessState(TypedDict):
     answer:str
     question: str
     policy_context: list[dict]
+    organisation_id: str
 
 
 def request_assessment(state: ReadinessState) -> ReadinessState:
@@ -99,7 +100,9 @@ def run_tools(state:ReadinessState)->ReadinessState:
     tool_results = []
     for block in assistant_message["content"]:
         if block["type"]=="tool_use":
-            outcome = execute_tool(block["name"], block["input"])
+            outcome = execute_tool(
+                block["name"], block["input"], state["organisation_id"]
+            )
             tool_results.append({
                 "type": "tool_result",
                 "tool_use_id": block["id"],
@@ -228,6 +231,22 @@ def build_graph():
     return builder.compile()
 
 
+def explain_readiness_for_job(job_id: str, organisation_id: str) -> str:
+    question = (
+        f"Explain the readiness assessment for {job_id}, including why it has "
+        "that status and which relevant procedure guidance applies."
+    )
+    result = build_graph().invoke({
+        "messages": [{"role": "user", "content": question}],
+        "needs_tool": False,
+        "answer": "",
+        "question": question,
+        "policy_context": [],
+        "organisation_id": organisation_id,
+    })
+    return result["answer"]
+
+
 if __name__ == "__main__":
     question = sys.argv[1] if len(sys.argv) > 1 else "Why is JOB-102 blocked?"
 
@@ -237,6 +256,7 @@ if __name__ == "__main__":
         "answer": "",
         "question": question,
         "policy_context": [],
+        "organisation_id": "ORG-DEMO",
     }
 
     graph = build_graph()

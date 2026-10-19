@@ -19,7 +19,7 @@ with patch(
     return_value=assessment,
 ), patch("followup_service.contractors_by_id") as mock_contractors:
     try:
-        prepare_followup(connection, "JOB-MULTI")
+        prepare_followup(connection, "JOB-MULTI", "ORG-DEMO")
     except ValueError as error:
         assert "exactly one assigned contractor" in str(error)
     else:
@@ -65,7 +65,7 @@ with patch(
     return_value=assessment_with_valid_insurance,
 ), patch("followup_service.contractors_by_id") as mock_contractors:
     try:
-        prepare_followup(connection, "JOB-TEST")
+        prepare_followup(connection, "JOB-TEST", "ORG-DEMO")
     except ValueError as error:
         assert "insurance document already meets" in str(error)
     else:
@@ -92,7 +92,7 @@ with patch(
     },
 ):
     try:
-        prepare_followup(connection, "JOB-TEST")
+        prepare_followup(connection, "JOB-TEST", "ORG-DEMO")
     except ValueError as error:
         assert "has no email address" in str(error)
     else:
@@ -123,7 +123,7 @@ with patch(
         }
     },
 ):
-    draft = prepare_followup(connection, "JOB-TEST")
+    draft = prepare_followup(connection, "JOB-TEST", "ORG-DEMO")
 
 assert draft["status"] == "draft"
 assert draft["job_id"] == "JOB-TEST"

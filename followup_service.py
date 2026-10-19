@@ -6,8 +6,8 @@ from repository import contractors_by_id
 from followup_repository import save_draft
 
 
-def prepare_followup(connection: Connection, job_id: str) -> dict:
-    assessment = assess_job_by_id(connection, job_id)
+def prepare_followup(connection: Connection, job_id: str, organisation_id: str) -> dict:
+    assessment = assess_job_by_id(connection, job_id, organisation_id)
     if assessment["status"] == "READY":
         raise ValueError(
             f"Job {job_id} meets the configured requirements; "
@@ -110,8 +110,8 @@ def prepare_followup(connection: Connection, job_id: str) -> dict:
         ],
     }
 
-def create_followup(connection: Connection, job_id: str) -> dict:
+def create_followup(connection: Connection, job_id: str, organisation_id: str) -> dict:
     """Prepare and store a draft; the caller owns the transaction."""
-    draft = prepare_followup(connection, job_id)
+    draft = prepare_followup(connection, job_id, organisation_id)
     draft_id = save_draft(connection, draft)
     return {"id": draft_id, **draft}

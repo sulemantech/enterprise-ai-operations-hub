@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import text
 
 from approval import ApprovalError, approval_fingerprint, approve_draft, authorise_execution
-from followup_repository import get_draft, update_draft_text
+from followup_repository import get_draft, latest_approval, update_draft_text
 from followup_service import create_followup
 
 ORG = "ORG-DEMO"
@@ -12,7 +12,7 @@ ORG = "ORG-DEMO"
 
 @pytest.fixture
 def draft(db_connection):
-    return create_followup(db_connection, "JOB-102")
+    return create_followup(db_connection, "JOB-102", ORG)
 
 
 def test_approval_copies_the_exact_message(db_connection, draft):
@@ -79,7 +79,7 @@ def test_text_changed_outside_the_api_cannot_execute(db_connection, draft):
         authorise_execution(db_connection, draft["id"], ORG)
 
 
-def test_approve_endpoint(client):
+def test_approve_endpoint(client, db_connection):
     draft = client.post("/assessments/JOB-102/followups").json()
 
     first = client.post(f"/followups/{draft['id']}/approve")
@@ -88,3 +88,5 @@ def test_approve_endpoint(client):
     assert first.status_code == 200 and first.json()["status"] == "approved"
     assert second.status_code == 409
     assert client.post("/followups/999999/approve").status_code == 404
+    approval = latest_approval(db_connection, draft["id"], ORG)
+    assert approval["approved_by"] == "https://identity.example.test/|test-manager"

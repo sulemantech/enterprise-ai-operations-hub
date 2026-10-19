@@ -10,6 +10,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import OperationalError
 
 from api import app, get_connection, get_transaction
+from auth import Principal, get_current_principal
 from db import get_engine
 
 
@@ -37,6 +38,12 @@ def client(db_connection):
     """An API client whose requests use the test's rolled-back connection."""
     app.dependency_overrides[get_connection] = lambda: db_connection
     app.dependency_overrides[get_transaction] = lambda: db_connection
+    app.dependency_overrides[get_current_principal] = lambda: Principal(
+        issuer="https://identity.example.test/",
+        subject="test-manager",
+        organisation_id="ORG-DEMO",
+        role="manager",
+    )
     try:
         yield TestClient(app)
     finally:

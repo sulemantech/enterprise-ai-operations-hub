@@ -43,7 +43,7 @@ def ask(question: str) -> None:
             print("Tool:", block.name)
             print("Arguments:", block.input)
             
-            outcome = execute_tool(block.name, block.input)
+            outcome = execute_tool(block.name, block.input, "ORG-DEMO")
 
             tool_results.append({
                 "type": "tool_result",
@@ -79,13 +79,13 @@ def ask(question: str) -> None:
             if block.type == "text":
                 print("Answer:", block.text)
 
-def execute_tool(tool_name: str, tool_input: dict) -> dict:
+def execute_tool(tool_name: str, tool_input: dict, organisation_id: str) -> dict:
     try:
         if tool_name != "get_job_assessment":
             raise ValueError(f"Unknown tool: {tool_name}")
 
         arguments = AssessmentInput.model_validate(tool_input)
-        result = get_job_assessment(arguments.job_id)
+        result = get_job_assessment(arguments.job_id, organisation_id)
 
         return {"is_error": False, "content": json.dumps(result)}
 

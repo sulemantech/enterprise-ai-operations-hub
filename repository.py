@@ -39,23 +39,26 @@ _JOBS_SQL = """
 """
 
 
-def jobs_in_window(connection: Connection, start: date, end: date) -> list[dict]:
-    """Return jobs with at least one day inside the window, inclusively."""
+def jobs_in_window(
+    connection: Connection, start: date, end: date, organisation_id: str
+) -> list[dict]:
+    """Return this organisation's jobs with a day in the window, inclusively."""
     rows = connection.execute(
         text(_JOBS_SQL + """
-            WHERE j.start_date <= :end AND j.end_date >= :start
+            WHERE j.organisation_id = :organisation_id
+              AND j.start_date <= :end AND j.end_date >= :start
             GROUP BY j.id
             ORDER BY j.start_date, j.id
         """),
-        {"start": start, "end": end},
+        {"start": start, "end": end, "organisation_id": organisation_id},
     )
     return [_job_record(row) for row in rows]
 
 
-def get_job(connection: Connection, job_id: str) -> dict | None:
+def get_job(connection: Connection, job_id: str, organisation_id: str) -> dict | None:
     row = connection.execute(
-        text(_JOBS_SQL + " WHERE j.id = :job_id GROUP BY j.id"),
-        {"job_id": job_id},
+        text(_JOBS_SQL + " WHERE j.id = :job_id AND j.organisation_id = :organisation_id GROUP BY j.id"),
+        {"job_id": job_id, "organisation_id": organisation_id},
     ).first()
     return _job_record(row) if row else None
 
