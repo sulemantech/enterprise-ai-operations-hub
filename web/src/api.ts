@@ -20,6 +20,11 @@ export interface Assessment {
   reason: string
 }
 
+export interface ReadinessExplanation {
+  job_id: string
+  answer: string
+}
+
 // FastAPI returns two error shapes:
 //   our own checks:     {"detail": "end must be on or after start"}
 //   FastAPI validation: {"detail": [{"loc": ["query", "start"], "msg": "..."}]}
@@ -47,10 +52,27 @@ export interface FollowupDraft {
   created_at: string
 }
 
+export interface CurrentUser {
+  issuer: string
+  subject: string
+  organisation_id: string
+  role: 'viewer' | 'manager'
+}
+
+export interface CurrentIdentity {
+  issuer: string
+  subject: string
+}
+
+export type LoginState =
+  | { status: 'signed_out' }
+  | { status: 'signed_in'; user: CurrentUser }
+  | { status: 'unprovisioned'; identity: CurrentIdentity }
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
   try {
-    response = await fetch(`/api${path}`, init)
+    response = await fetch(`/api${path}`, { credentials: 'same-origin', ...init })
   } catch {
     throw new Error('Cannot reach the API. Is "fastapi dev api.py" running?')
   }
@@ -69,8 +91,46 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T
 }
 
+export async function fetchLoginState(): Promise<LoginState> {
+  let response: Response
+  try {
+    response = await fetch('/api/auth/me', { credentials: 'same-origin' })
+  } catch {
+    throw new Error('Cannot reach the API. Is "fastapi dev api.py" running?')
+  }
+
+  if (response.status === 401) return { status: 'signed_out' }
+  if (response.status === 403) {
+    const identityResponse = await fetch('/api/auth/identity', { credentials: 'same-origin' })
+    if (identityResponse.ok) {
+      return { status: 'unprovisioned', identity: (await identityResponse.json()) as CurrentIdentity }
+    }
+  }
+  if (response.status >= 500) {
+    throw new Error(
+      `The API or database is unavailable (HTTP ${response.status}). ` +
+        'Are "fastapi dev api.py" and "docker compose up -d" running?',
+    )
+  }
+  const body = await response.json().catch(() => null)
+  if (!response.ok) throw new Error(errorMessage(body, response.status))
+  return { status: 'signed_in', user: body as CurrentUser }
+}
+
+export function logout(): Promise<{ status: string }> {
+  return request<{ status: string }>('/auth/logout', { method: 'POST' })
+}
+
+export function loginToLocalDemo(): Promise<{ status: string; mode: string }> {
+  return request<{ status: string; mode: string }>('/auth/dev-login', { method: 'POST' })
+}
+
 export function fetchAssessments(start: string, end: string): Promise<Assessment[]> {
   return request(`/assessments?${new URLSearchParams({ start, end })}`)
+}
+
+export function fetchReadinessExplanation(jobId: string): Promise<ReadinessExplanation> {
+  return request(`/assessments/${encodeURIComponent(jobId)}/explanation`)
 }
 
 // Stores a draft on the server. Nothing is sent to the contractor.

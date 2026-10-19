@@ -1,11 +1,16 @@
-import { Fragment, useMemo, useState, type FormEvent } from 'react'
+import { Fragment, useEffect, useMemo, useState, type FormEvent } from 'react'
 import {
   approveFollowup,
   createFollowup,
+  fetchLoginState,
   fetchAssessments,
+  fetchReadinessExplanation,
+  loginToLocalDemo,
+  logout,
   saveFollowup,
   type Assessment,
   type FollowupDraft,
+  type LoginState,
   type Status,
 } from './api'
 
@@ -42,9 +47,46 @@ type View =
   | { kind: 'results'; assessments: Assessment[] }
 
 export default function App() {
+  const [loginState, setLoginState] = useState<LoginState | null>(null)
+  const [authError, setAuthError] = useState<string | null>(null)
   const [start, setStart] = useState(DEFAULT_START)
   const [end, setEnd] = useState(DEFAULT_END)
   const [view, setView] = useState<View>({ kind: 'idle' })
+
+  async function refreshLoginState() {
+    setAuthError(null)
+    try {
+      setLoginState(await fetchLoginState())
+    } catch (error) {
+      setAuthError((error as Error).message)
+    }
+  }
+
+  useEffect(() => {
+    void refreshLoginState()
+  }, [])
+
+  async function signOut() {
+    try {
+      await logout()
+      setLoginState({ status: 'signed_out' })
+    } catch (error) {
+      setAuthError((error as Error).message)
+    }
+  }
+
+  async function signIn() {
+    if (!import.meta.env.DEV) {
+      window.location.assign('/api/auth/login')
+      return
+    }
+    try {
+      await loginToLocalDemo()
+      await refreshLoginState()
+    } catch (error) {
+      setAuthError((error as Error).message)
+    }
+  }
 
   async function checkJobs(event: FormEvent) {
     event.preventDefault()
@@ -56,11 +98,54 @@ export default function App() {
     }
   }
 
+  if (authError) {
+    return (
+      <main>
+        <h1>Sign-in unavailable</h1>
+        <p className="error" role="alert">{authError}</p>
+        <button type="button" onClick={() => void refreshLoginState()}>Try again</button>
+      </main>
+    )
+  }
+
+  if (!loginState) {
+    return <main><p className="hint">Checking your sign-in…</p></main>
+  }
+
+  if (loginState.status === 'signed_out') {
+    return (
+      <main>
+        <header>
+          <h1>Contractor readiness</h1>
+          <p className="subtitle">{import.meta.env.DEV ? 'Open the local demo to review evidence and follow-ups.' : 'Sign in to review evidence and follow-ups.'}</p>
+        </header>
+        <button type="button" onClick={() => void signIn()}>
+          {import.meta.env.DEV ? 'Enter local demo' : 'Sign in with Hellō'}
+        </button>
+      </main>
+    )
+  }
+
+  if (loginState.status === 'unprovisioned') {
+    return (
+      <main>
+        <h1>Organisation access not set up</h1>
+        <p className="hint">Hellō verified your identity, but an administrator must assign an organisation and role.</p>
+        <p>Issuer: <code>{loginState.identity.issuer}</code></p>
+        <p>Subject: <code>{loginState.identity.subject}</code></p>
+        <button type="button" onClick={() => void refreshLoginState()}>Check access again</button>
+        <button type="button" onClick={() => void signOut()}>Sign out</button>
+      </main>
+    )
+  }
+
   return (
     <main>
       <header>
         <h1>Contractor readiness</h1>
         <p className="subtitle">Synthetic demo data · Demo Field Services</p>
+        <p className="subtitle">Signed in as {loginState.user.role}</p>
+        <button type="button" onClick={() => void signOut()}>Sign out</button>
       </header>
 
       <form onSubmit={checkJobs}>
@@ -95,6 +180,21 @@ function Results({ assessments }: { assessments: Assessment[] }) {
   const [statusFilter, setStatusFilter] = useState<Status | null>(null)
   const [search, setSearch] = useState('')
   const [followupJobId, setFollowupJobId] = useState<string | null>(null)
+  const [explanationJobId, setExplanationJobId] = useState<string | null>(null)
+  const [explanation, setExplanation] = useState<{ jobId: string; text?: string; error?: string } | null>(null)
+
+  async function explainJob(jobId: string) {
+    setExplanationJobId(jobId)
+    setExplanation({ jobId })
+    try {
+      const result = await fetchReadinessExplanation(jobId)
+      setExplanation({ jobId, text: result.answer })
+    } catch (error) {
+      setExplanation({ jobId, error: (error as Error).message })
+    } finally {
+      setExplanationJobId(null)
+    }
+  }
 
   const counts = useMemo(() => {
     const result: Record<Status, number> = { READY: 0, NEEDS_REVIEW: 0, BLOCKED: 0 }
@@ -200,6 +300,14 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                       <code>{a.reason}</code>
                     </td>
                     <td>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        disabled={explanationJobId === a.job_id}
+                        onClick={() => void explainJob(a.job_id)}
+                      >
+                        {explanationJobId === a.job_id ? 'Explaining…' : 'Explain'}
+                      </button>
                       {canDraftFollowup(a) && (
                         <button
                           type="button"
@@ -212,6 +320,15 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                       )}
                     </td>
                   </tr>
+                  {explanation?.jobId === a.job_id && (
+                    <tr className="followup-row">
+                      <td colSpan={6}>
+                        <p className={explanation.error ? 'error' : 'hint'} role="status">
+                          {explanation.error ?? explanation.text ?? 'Preparing an evidence-backed explanation…'}
+                        </p>
+                      </td>
+                    </tr>
+                  )}
                   {followupJobId === a.job_id && (
                     <tr className="followup-row">
                       <td colSpan={6}>
