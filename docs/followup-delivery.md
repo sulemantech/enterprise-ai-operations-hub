@@ -30,4 +30,4 @@ The URL and token are optional. Without them, the API responds with `503` before
 | `rejected` | n8n returned its explicit test-recipient rejection | Fix the test workflow/configuration before a new approval |
 | `unknown` | Timeout, server error, or unexpected response; n8n may have acted | Reconcile the n8n execution manually; do not retry |
 
-This is a learning integration, not production delivery infrastructure. Durable retries, automated reconciliation, operational alerts, CSRF protection, and a security review remain outstanding.
+This is a local prototype integration, not production delivery infrastructure. Automated reconciliation, operational alerts, CSRF protection, and a security review remain outstanding.

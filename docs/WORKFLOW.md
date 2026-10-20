@@ -1,4 +1,4 @@
-﻿# Simple workflow
+﻿# Contractor Readiness Workflow
 
 ## Business context
 
@@ -17,25 +17,25 @@ Primary use: a FocusIMS-context operations manager investigating contractor evid
 | Is the job ready? | Job ID clarification | Demonstrated |
 | Is JOB-9999 ready? | Job lookup | Missing-job handling demonstrated |
 | Which jobs overlap 5–11 October 2026? | Database date-window query | API/browser; no conversational list tool yet |
-| Which procedure requires full-job insurance cover? | Versioned procedure passage | Session 13 target |
-| Why does JOB-104 need review, and what should happen next? | Assessment and review procedure | Assessment exists; citation planned |
-| Draft a request for updated evidence. | Finding, contact and follow-up instructions | Sessions 15–16 |
-| Was the approved request delivered? | Stored execution records | Sessions 17–18 |
+| Which procedure requires full-job insurance cover? | Versioned procedure passage | Implemented; citation validation applies |
+| Why does JOB-104 need review, and what should happen next? | Assessment and review procedure | Assessment and procedure explanation available |
+| Draft a request for updated evidence. | Finding, contact and follow-up instructions | Draft, approval, and test delivery implemented |
+| Was the approved request delivered? | Stored execution records | Test workflow outcome displayed; unknown outcomes require manual reconciliation |
 | Prepare contractor evidence references for an internal review. | Findings, procedures and action history | Later extension, not an implemented audit report |
 
 Out of scope now: company-wide ISO verdicts, certification, legal advice, authenticity checks, OCR and full finding registers. The rule function returns one overall status/reason, not all possible gaps. Natural-language dates remain deferred.
 
 Use the fixed fictional dates in [the sample data](../data/demo/readiness.json). No client access or real email account is needed.
 
-## What we do
+## Demonstration Flow
 
 1. Read a job and its contractor documents.
 2. Check required insurance and licence records using Python.
 3. Show a status and reason.
-4. Explain the result through the implemented CLI AI assistant.
-5. Next, retrieve the matching company procedure and cite its section/version.
-6. Later, draft a follow-up, let the manager approve it, and send it to a local test inbox through n8n.
-7. Later, retain evidence references and action outcomes for review.
+4. Explain the result through the FastAPI-connected LangGraph assistant.
+5. Retrieve the matching synthetic company procedure and cite its section/version.
+6. Draft a follow-up, let the manager approve the exact message, and dispatch it to a local test inbox through n8n.
+7. Retain evidence references and delivery outcomes separately from readiness.
 
 ## Rules for our first examples
 
@@ -59,8 +59,8 @@ The first [knowledge-base procedure](knowledge/contractor_approval_procedure.md)
 
 READY means these document checks pass. A reminder does not change readiness; new reviewed evidence can.
 
-## Keep the first version small
+## Scope Boundaries
 
 Use the explicit date window in the fixture, one local demo manager, and structured document metadata. Defer natural-language dates, file uploads/OCR, additional roles, staff training checks, and equipment checks.
 
-The original [detailed workflow](archive/advanced-baseline/docs/WORKFLOW.md) remains a reference for later edge cases. Implement and test those cases progressively instead of learning them all upfront.
+The original [detailed workflow](archive/advanced-baseline/docs/WORKFLOW.md) remains a reference for additional edge cases.

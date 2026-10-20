@@ -1,58 +1,46 @@
-﻿# Enterprise AI Operations Hub
+# Contractor Evidence & Readiness Operations Hub
 
-Learn to build an AI application from end to end, one working step at a time.
+**Operational decision support for contractor evidence and controlled follow-up.**
 
-## Business focus
+This client-evaluation prototype demonstrates how an operations manager can review job readiness, understand evidence gaps against a company procedure, and prepare an approved contractor follow-up. It is inspired by the contractor-management domain; it is not an official FocusIMS or FocusBIS product, integration, or endorsement.
 
-**Contractor Evidence and Audit Preparation Assistant**, inspired by the FocusIMS supplier-management domain. The primary user is an operations manager at a trade or maintenance business. FocusBIS consultants preparing contractor evidence for review are a secondary potential audience.
+All organisations, people, jobs, policies, and documents shown here are synthetic. The current build is intended for local demonstration and workflow evaluation—not production use. Business fit, client value, and integration compatibility require validation with authorised stakeholders.
 
-The target question is: **“Why is JOB-102 blocked, which company procedure applies, and what should we request from the contractor?”**
+## Product Preview
 
-FocusIMS already describes contractor-document management. Our proposed contribution connects conversational investigation, operational facts, procedure citations and approved follow-ups. This is an independent synthetic prototype, not an official product or integration. Client value and integration compatibility remain unvalidated. See the [public-product research](docs/FOCUSIMS_RESEARCH.md).
+The dashboard brings readiness counts, job-level reasons, and follow-up delivery state together. The screenshot highlights the JOB-102 example.
 
-### Current capabilities
+![Contractor readiness dashboard showing JOB-102 blocked and its follow-up status](docs/contractor-readiness-dashboard.png)
 
-- Implemented: readiness rules, PostgreSQL records, API/browser assessments, a LangGraph explanation endpoint with policy retrieval and citation checks, a local-only demo sign-in, and saved follow-up drafts with exact-text approval records.
-- Manually demonstrated: JOB-102 explanation, missing job-ID clarification and unknown-job handling.
-- Implemented and locally tested: approval-gated FastAPI dispatch to n8n, test-recipient-only delivery through Mailpit, duplicate prevention, durable outcome records, and a separate follow-up status in the job list.
-- Added: local-only demo access for development, plus Hellō authorization-code login with PKCE, signed FastAPI sessions, and server-side organisation membership/role checks for deployment. The local demo bypasses external identity setup and is disabled outside `APP_ENV=development`; see [authentication setup](docs/authentication.md).
-- Before production: audited user provisioning, CSRF protection, complete tenant-data isolation, idempotent execution, reliable delivery reconciliation, audit and recovery controls.
+## Demonstrated Capabilities
 
-The graph is called through FastAPI, which passes the organisation from the authenticated session to its tools; the separate CLI remains for local exploration. Document readiness is not an ISO compliance verdict or permission to commence work.
+- **Evidence readiness:** deterministic rules assess required contractor documents against job dates and policy thresholds; PostgreSQL stores operational records.
+- **Operational dashboard:** FastAPI-backed assessments with date filtering, search, status counts, job explanations, and follow-up state.
+- **Procedure-grounded explanations:** FastAPI invokes the LangGraph workflow, retrieves applicable policy passages, and validates citations against the retrieved source.
+- **Controlled follow-up:** managers review and edit a draft, approve the exact text, then dispatch through an authenticated n8n webhook to a local test inbox. Delivery status is separate from readiness status.
+- **Authentication boundary:** local-only development sign-in and Hellō OIDC with signed FastAPI sessions and organisation membership/role checks are implemented. Full production-grade tenant isolation and security review remain outstanding.
 
-See [questions and workflow](docs/WORKFLOW.md) and [knowledge sources and RAG context](docs/knowledge/README.md).
+### End-to-end flow
 
-## System architecture
+![End-to-end architecture](docs/end-to-end-connected-architecture.png)
 
-![End-to-end connected architecture: solid lines show working capability; dashed lines show integration work remaining](docs/end-to-end-connected-architecture.png)
+The architecture and workflow diagrams describe the [LangGraph reasoning path](docs/langgraph-ai-flow.svg) and [n8n follow-up path](docs/n8n-followup-workflow.svg). The n8n workflow has been locally exercised with Mailpit; the architecture is not a deployed production service or customer integration.
 
-The diagram predates the API-to-LangGraph and API-to-n8n code paths. Both are now connected in code; the n8n path has been tested locally with Mailpit. This remains a synthetic local prototype, not a deployed production service or a real customer integration. [Open the SVG](docs/end-to-end-connected-architecture.svg).
+### n8n Workflow Editor
 
-### Component flows
+The screenshot below shows the published local workflow canvas used for the approved test follow-up path.
 
-The [LangGraph + AI diagram](docs/langgraph-ai-flow.svg) details tool routing, deterministic checks, policy retrieval and citation validation. The [n8n diagram](docs/n8n-followup-workflow.svg) shows its authenticated webhook, test-recipient guard, SMTP step and response branches. The local test path is connected; production deployment and recovery controls remain outstanding.
+![Published n8n workflow editor showing the webhook, recipient condition, email action, and webhook responses](docs/n8n-followup-workflow.png)
 
-![LangGraph and AI reasoning flow](docs/langgraph-ai-flow.png)
+## Example Use Case
 
-![n8n guarded follow-up workflow](docs/n8n-followup-workflow.png)
+For **JOB-102**, the dashboard reports that insurance evidence expires before the assigned job ends. The manager can request an explanation grounded in the applicable synthetic procedure, prepare a message asking for coverage for the full job period, review and approve the exact text, and send it to the local test workflow. A successful workflow execution does not itself verify that a contractor received or acted on a message.
 
-See the [animated workflow GIF](docs/contractor-readiness-workflow.gif) and [LinkedIn architecture image](docs/contractor-readiness-production-linkedin.png) for additional visuals.
+See [workflow scope and assumptions](docs/WORKFLOW.md), [knowledge sources](docs/knowledge/README.md), and [public-product research](docs/FOCUSIMS_RESEARCH.md).
 
-## Our example
+## Run the Local Demonstration
 
-A manager checks fictional jobs and sees which contractors have missing documents. The app can request a LangGraph explanation with procedure passages; saved follow-up drafts can be reviewed, approved, and dispatched through the API to n8n when configured. Four fixed jobs provide predictable examples; generated records provide a larger dataset.
-
-We use invented data inspired by the FocusIMS business domain. This is an independent learning project; its value to that client is still unvalidated.
-
-## Start here
-
-1. [Today's small exercise](docs/DAY_01.md)
-2. [Simple architecture](docs/architecture.md)
-3. [Step-by-step plan](PROJECT_PLAN.md)
-
-## Run it locally
-
-Needs Python 3.11 and Docker Desktop. From the project folder, in CMD:
+Requires Python 3.11, Docker Desktop, and Node.js 20.19+. From the project folder, in CMD:
 
 ```cmd
 py -3.11 -m venv .venv
@@ -61,20 +49,12 @@ python -m pip install -r requirements.txt -r requirements-dev.txt
 copy .env.example .env
 
 docker compose up -d
-alembic upgrade head
+python -m alembic upgrade head
 python seed.py
-
-python -m pytest
 fastapi dev api.py
 ```
 
-Set database credentials, the model API key, and a random `SESSION_SECRET` in `.env`. In local development, open the web app and choose **Enter local demo**; Hellō setup is not required. PostgreSQL uses port 5433; API docs are at http://127.0.0.1:8000/docs. For a deployed environment, configure Hellō and provision memberships as described in [authentication setup](docs/authentication.md). Seeding resets synthetic records: the default loads fixtures plus generated data; `python seed.py --small` loads only the four fixture jobs.
-
-To try follow-up delivery, configure `N8N_FOLLOWUP_WEBHOOK_URL` and `N8N_FOLLOWUP_WEBHOOK_TOKEN` using [the test-only delivery setup](docs/followup-delivery.md). Do not configure real recipients or production SMTP for this prototype.
-
-Run the separate graph with `python readiness_graph.py "Why is JOB-102 blocked?"`. This makes paid model requests.
-
-In a second terminal, the browser page (needs Node.js 20.19+):
+Configure database credentials, the model API key, and a random `SESSION_SECRET` in `.env`. In a second terminal:
 
 ```cmd
 cd web
@@ -82,29 +62,28 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173.
+Open http://localhost:5173 and select **Enter local demo**. The development sign-in is disabled outside `APP_ENV=development`; Hellō is not required for the local walkthrough. API documentation is available at http://127.0.0.1:8000/docs. Database seeding resets synthetic records; `python seed.py --small` loads only the four fixed example jobs.
 
-## Integration roadmap
+To exercise the approved follow-up path, configure `N8N_FOLLOWUP_WEBHOOK_URL` and `N8N_FOLLOWUP_WEBHOOK_TOKEN` using the [test delivery setup](docs/followup-delivery.md). Keep the recipient guard and test SMTP inbox in place; do not configure real recipients or production SMTP.
 
-Current: React -> FastAPI -> Python rules + PostgreSQL; FastAPI -> LangGraph -> tenant-scoped tools + policy retrieval.
+The separate graph CLI is available with `python readiness_graph.py "Why is JOB-102 blocked?"`; model requests may incur cost.
 
-Next: configure and exercise the approval-gated FastAPI -> n8n path using only a local test SMTP inbox; then add operator reconciliation for unknown outcomes.
+## Delivery Roadmap
 
-Hellō login and the API membership boundary are wired for local development. See [Hellō setup and remaining security work](docs/authentication.md); this is not yet a public-deployment-ready service.
+1. **Operational recovery:** add an operator reconciliation flow for unknown n8n delivery outcomes before any retry.
+2. **Security hardening:** complete CSRF protection, verify organisation scoping across every data path, review session/cookie settings, and add audited user provisioning.
+3. **Reliability and evaluation:** test duplicate and partial-failure scenarios, measure explanation accuracy/citation support, and add monitoring and recovery procedures.
+4. **Stakeholder validation:** confirm the target workflow, authoritative evidence fields, procedure ownership, and integration permissions with the relevant business stakeholders.
+5. **Deployment readiness:** only after the previous gates, define a supported hosting, backup, release, and incident-response model.
 
-Each addition solves a problem you can already see. We will explain the code, run it, and change an example to understand its behavior before adding the next technology.
+For the current implementation state and acceptance criteria, see the [delivery plan](PROJECT_PLAN.md). Authentication and integration details are documented in [Hellō setup](docs/authentication.md) and [follow-up delivery](docs/followup-delivery.md).
 
-## Working together
+## Current Boundaries
 
-Prioritise understanding and small working changes. Explain unfamiliar terms when they first appear. Teach only what the current step needs. Ask one short understanding question after a demonstration; avoid long homework lists. Discuss meaningful architecture changes, and keep documentation short.
+- Synthetic records and illustrative procedures only; no live client data or approved company policy is included.
+- Readiness is not a legal, safety, ISO compliance, or permission-to-work verdict.
+- Follow-up delivery is restricted to test recipients and a local capture inbox.
+- Hellō login is wired, but production-grade tenant isolation, CSRF protection, audited provisioning, and operational recovery are not complete.
+- No FocusIMS/FocusBIS API, customer environment, or production email integration is configured.
 
-The app uses synthetic records, and API delivery allows only `@example.invalid` recipients. The dispatch code is not yet tested against a configured n8n instance. Public deployment and real recipients require tenant isolation, CSRF protection, audited provisioning, idempotent delivery reconciliation, and recovery controls first.
-
-## Optional references
-
-- [Workflow](docs/WORKFLOW.md)
-- [Learning approach](docs/LEARNING_PATH.md)
-- [Short decision summary](docs/decisions/README.md)
-- [Test-only follow-up delivery setup](docs/followup-delivery.md)
-- [FocusIMS research](docs/FOCUSIMS_RESEARCH.md)
-- [Preserved detailed plan](docs/archive/advanced-baseline/PROJECT_PLAN.md)
+These boundaries are explicit so a client can assess the concept without mistaking a prototype for a production-ready service.

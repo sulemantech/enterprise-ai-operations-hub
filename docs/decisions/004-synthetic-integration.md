@@ -13,7 +13,7 @@ Use invented contractors, jobs, reviewed evidence metadata, and company requirem
 
 ## Alternatives
 
-- Wait for client data/access: more representative, but blocks independent learning and development.
+- Wait for client data/access: more representative, but blocks independent workflow validation and development.
 - Use anonymised client exports: may retain sensitive or identifying details and still requires appropriate authorisation.
 - Connect an unrelated external CRM immediately: demonstrates that vendor's API but adds accounts and mapping work without proving the chosen business workflow.
 

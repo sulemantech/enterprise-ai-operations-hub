@@ -14,7 +14,7 @@ Demo Field Services engages electrical subcontractors for maintenance at commerc
 
 CP-01 to CP-06 describe the existing automated document checks. CP-07 to CP-12 describe proposed human processes; their completion is not recorded or verified by the current application. The assistant may explain these processes but must report their job-specific completion as unknown unless suitable records become available.
 
-Document version 2 adds practical workflow detail; structured policy version 1 and its automated thresholds remain unchanged. This is a draft for learning, not a procedure approved for use on a real site.
+Document version 2 adds illustrative workflow detail; structured policy version 1 and its automated thresholds remain unchanged. This synthetic draft is not an approved procedure for use on a real site.
 
 ## CP-01 — Purpose and assignment
 

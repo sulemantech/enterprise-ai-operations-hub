@@ -1,76 +1,25 @@
-﻿# Simple architecture
+﻿# Application Architecture
 
-Status: rules, database, API/browser, and tenant-scoped LangGraph explanations are implemented. The API has an approval-gated n8n delivery endpoint with a test-only recipient policy and durable attempt ledger; local webhook configuration and end-to-end verification remain.
+Status: readiness rules, PostgreSQL persistence, API/browser assessments, tenant-scoped LangGraph explanations, and approval-gated n8n test delivery are implemented. Security hardening, automated delivery reconciliation, and production operations remain open.
 
-## What are we building?
+## Product Context
 
-A manager investigates contractor evidence in the FocusIMS supplier-management business context. The target journey connects facts, findings, procedure citations and approved follow-ups. All records are fictional; no FocusIMS or FocusBIS integration exists.
+A manager investigates contractor evidence in a contractor-management workflow. The target journey connects operational facts, readiness findings, procedure citations, and approved follow-ups. All records are synthetic; no FocusIMS or FocusBIS integration exists.
 
-## Current flow and retrieval boundary
+## Request Flow and Retrieval Boundary
 
 ```text
 Browser -> FastAPI -> repository + readiness rules -> PostgreSQL facts
 Browser -> FastAPI -> LangGraph -> tenant-scoped tools -> PostgreSQL facts
                               -> policy retrieval -> model explanation
 CLI question -> LangGraph (ORG-DEMO local workflow)
-Next: matching procedure passages -> cited explanation
+FastAPI -> approved follow-up delivery -> authenticated n8n webhook -> local test inbox
 ```
 
-The operational database supplies assignments, dates and coverage. The planned knowledge base supplies company procedures. PostgreSQL/pgvector will store a derived search index; source Markdown stays versioned in the project. Filter passages by organisation, policy ID and exact version before semantic ranking. Missing text must be reported and cannot alter the rules result.
+The operational database supplies assignments, dates, contractor evidence, and policy metadata. Versioned procedure sources are indexed in PostgreSQL/pgvector; retrieval filters by organisation, policy ID, and exact policy version before semantic ranking. Missing or incompatible text must be reported and cannot alter the deterministic readiness result.
 
-The graph's prompts do not guarantee factual accuracy. Broader automated checks and evaluations remain needed. The current assessment returns one overall reason, not a complete audit finding register. The browser and CLI are separate entry points today.
+The graph's prompts do not guarantee factual accuracy. The current assessment returns one overall reason, not a complete audit finding register. Broader automated evaluations remain necessary. The browser and CLI are separate entry points.
 
-See [knowledge sources and context](knowledge/README.md) and [question scope](WORKFLOW.md).
+See [knowledge sources and context](knowledge/README.md), [question scope](WORKFLOW.md), [authentication configuration](authentication.md), and [test delivery setup](followup-delivery.md).
 
-## Start with this
-
-```text
-Sample JSON data -> Python function -> Job status and reason
-```
-
-JSON is a text format for storing structured data. Our first Python function reads job and document dates and returns a result. This makes the business behavior understandable before we add other tools.
-
-## Add one piece at a time
-
-| Piece | Its simple job | When |
-| --- | --- | --- |
-| Python | Check the document requirements | First |
-| FastAPI | Let another program request that check through HTTP | After the function works |
-| PostgreSQL | Save and read records in a database | After the API works |
-| React | Display results and buttons in a browser | After stored records work |
-| LLM | Interpret a question and explain known results | After the ordinary app works |
-| LangGraph | Organise the AI steps and their shared state | After one model call works |
-| RAG with pgvector | Find relevant policy text to support an answer | After the graph works |
-| n8n | Run the approved follow-up workflow | After proposals work |
-
-Docker helps run supporting services such as PostgreSQL and n8n. Introduce it when we need the first service.
-
-## The eventual local flow
-
-```text
-Manager uses React
-    -> FastAPI receives the request
-    -> LangGraph coordinates the question
-    -> Python reads PostgreSQL and checks requirements
-    -> Relevant policy text helps explain the result
-    -> Manager approves an exact message
-    -> Server checks that approval
-    -> n8n sends to a local test inbox
-    -> Browser shows the actual result
-```
-
-React and LangGraph use the same business checks. AI cannot change a rule result or approve its own message.
-
-## Three rules to remember now
-
-1. Python code decides whether document requirements pass.
-2. The server requires approval before executing a follow-up.
-3. The UI reports success only after the operation succeeds.
-
-Our first local approval records the exact draft that was approved. Editing it requires approval again. A local demo user is only a development convenience; real authentication comes before shared deployment.
-
-## Learn later
-
-Restart recovery, expired approvals, duplicate prevention, service permissions, detailed audit records, backups, and deployment. These remain required for production preparation. We will teach them through concrete failures after the first local flow works.
-
-The earlier [detailed architecture](archive/advanced-baseline/docs/architecture.md) is preserved as optional reference. It is not today's reading assignment. See the [short decisions](decisions/README.md) for our current choices.
+The deterministic readiness result remains authoritative; AI explains findings but cannot change a rule result or approve a follow-up. Approval is bound to the exact recipient, subject, and message text. Uncertain delivery is recorded and must be reconciled before another send.

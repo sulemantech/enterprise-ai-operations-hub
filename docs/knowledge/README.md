@@ -34,15 +34,11 @@ The procedure document is now `PROC-CONTRACTOR-001` version 2 (draft); the struc
 
 The procedure now includes a manual evidence-review checklist. Later sources may include approved task-specific procedures and verified ISO mappings. Neither full ISO standards nor private client procedures are included. Never invent clause citations. Public references are contextual guidance, not automatically approved customer requirements.
 
-## Implementation steps for Session 13
+## Retrieval Pipeline
 
-1. Review source text against the structured demo policy and implemented rules.
-2. Split at CP section headings, retaining enough context for each passage to stand alone.
-3. Store organisation ID, policy ID/version, document ID/version, section ID, title, source path, content hash, text and embedding model identifier per chunk.
-4. Choose the embedding provider/model and dimension, then add a migration and repeatable ingestion process. Avoid duplicate chunks on re-indexing.
-5. Derive scope and exact policy/version from the loaded job, not model-generated arguments. Filter before semantic ranking.
-6. Search using the question and assessed reason. Give the model a small set of passages alongside authoritative operational facts.
-7. Require section citations and verify cited IDs exist in the retrieved set. This alone does not establish semantic accuracy.
+The ingestion pipeline checks source text against the structured demonstration policy and implemented rules, then splits it at procedure section boundaries. Each indexed passage retains organisation, policy and document versions, section ID, source path, content hash, and embedding metadata. Re-indexing is repeatable and avoids duplicate chunks.
+
+At query time, policy scope and exact version come from the loaded job, not model-generated arguments. Retrieval filters before semantic ranking and supplies matching passages alongside authoritative operational facts. The response requires section citations and validates cited IDs against retrieved passages; citation validation alone does not establish semantic accuracy.
 
 Retrieved text is untrusted input. It cannot grant permissions, execute actions or override code decisions.
 
