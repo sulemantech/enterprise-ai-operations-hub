@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
   <title id="title">n8n approved follow-up workflow</title>
-  <desc id="desc">Defined n8n workflow with header-authenticated POST webhook, recipient allowlist, SMTP email send for permitted test addresses, sent JSON response, and 422 rejection for other recipients. The application server is not yet connected.</desc>
+  <desc id="desc">n8n workflow with header-authenticated POST webhook, recipient allowlist, SMTP email send for permitted test addresses, sent JSON response, and 422 rejection for other recipients. FastAPI has an approval-gated caller; local webhook credentials and end-to-end verification remain.</desc>
   <defs>
     <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#18324f" flood-opacity=".10"/></filter>
     <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M2 2 10 6 2 10" fill="none" stroke="#60758b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></marker>
@@ -19,7 +19,7 @@
   <text x="84" y="239" class="lane">ALLOWED PATH · ONLY THE TEST RECIPIENT PASSES</text>
   <g filter="url(#shadow)">
     <rect x="75" y="290" width="205" height="146" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
-    <text x="97" y="325" class="tag" fill="#3979c3">APPLICATION SERVER</text><text x="97" y="364" class="head">Approved payload</text><text x="97" y="394" class="body">Exact recipient + text</text><text x="97" y="418" class="small">Webhook call pending</text>
+    <text x="97" y="325" class="tag" fill="#3979c3">FASTAPI SERVER</text><text x="97" y="364" class="head">Approved payload</text><text x="97" y="394" class="body">Exact recipient + text</text><text x="97" y="418" class="small">Caller implemented · config pending</text>
 
     <rect x="340" y="290" width="250" height="146" rx="17" fill="#fff" stroke="#8bb8e2" stroke-width="2"/>
     <text x="362" y="325" class="tag" fill="#3979c3">WEBHOOK · POST</text><text x="362" y="364" class="head">/followup-send</text><text x="362" y="394" class="body">Header authentication</text><text x="362" y="418" class="small">Receives request body</text>

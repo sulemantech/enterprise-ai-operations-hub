@@ -54,7 +54,7 @@ def authorise_execution(connection: Connection, draft_id: int, organisation_id: 
     endpoint is refused too. The returned text comes from the approval row,
     because that is what the manager actually approved.
     """
-    draft = followup_repository.get_draft(connection, draft_id, organisation_id)
+    draft = followup_repository.lock_draft(connection, draft_id, organisation_id)
     if draft is None:
         raise ApprovalError(f"Draft {draft_id} not found")
     if draft["status"] != "approved":

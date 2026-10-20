@@ -41,7 +41,20 @@ def test_assessment_describes_the_job(client):
         "contractors": [{"id": "CON-002", "name": "Demo Electrical Two", "trade": "Electrical"}],
         "status": "BLOCKED",
         "reason": "EXPIRES_BEFORE_JOB_END",
+        "followup_status": None,
     }
+
+
+def test_assessment_reports_latest_followup_status(client):
+    created = client.post("/assessments/JOB-102/followups")
+    assert created.status_code == 201
+    assert created.json()["status"] == "draft"
+
+    assessment = client.get("/assessments/JOB-102")
+
+    assert assessment.status_code == 200
+    assert assessment.json()["status"] == "BLOCKED"
+    assert assessment.json()["followup_status"] == "draft"
 
 
 def test_explanation_uses_authenticated_organisation(client, monkeypatch):

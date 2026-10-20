@@ -90,3 +90,26 @@ def test_approve_endpoint(client, db_connection):
     assert client.post("/followups/999999/approve").status_code == 404
     approval = latest_approval(db_connection, draft["id"], ORG)
     assert approval["approved_by"] == "https://identity.example.test/|test-manager"
+
+
+def test_send_endpoint_passes_session_organisation_to_delivery_service(client, monkeypatch):
+    import followup_delivery
+
+    calls = []
+
+    def fake_send(draft_id, organisation_id):
+        calls.append((draft_id, organisation_id))
+        return {
+            "delivery_id": 1,
+            "draft_id": draft_id,
+            "approval_id": 2,
+            "status": "sent",
+            "already_processed": False,
+        }
+
+    monkeypatch.setattr(followup_delivery, "send_approved_followup", fake_send)
+
+    response = client.post("/followups/23/send")
+
+    assert response.status_code == 200
+    assert calls == [(23, ORG)]

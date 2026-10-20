@@ -28,7 +28,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\"status\": \"sent\", \"draft_id\": {{ $('Webhook').item.json.body.draft_id }}}\n",
+        "responseBody": "={\"status\": \"sent\", \"draft_id\": {{ $('Webhook').item.json.body.draft_id }}, \"approval_id\": {{ $('Webhook').item.json.body.approval_id }}}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",

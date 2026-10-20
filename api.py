@@ -65,11 +65,20 @@ class Assessment(BaseModel):
     contractors: list[Contractor]
     status: str
     reason: str
+    followup_status: str | None
 
 
 class ReadinessExplanation(BaseModel):
     job_id: str
     answer: str
+
+
+class FollowupDelivery(BaseModel):
+    delivery_id: int
+    draft_id: int
+    approval_id: int
+    status: str
+    already_processed: bool
 
 
 class FollowupDraft(BaseModel):
@@ -90,12 +99,17 @@ class FollowupEdit(BaseModel):
     body: str = Field(min_length=1, max_length=5000)
 
 
-def assess_many(connection: Connection, jobs: list[dict]) -> list[Assessment]:
+def assess_many(
+    connection: Connection, jobs: list[dict], organisation_id: str
+) -> list[Assessment]:
     """Assess jobs using three queries in total, however many jobs there are."""
     contractor_ids = sorted({cid for job in jobs for cid in job["contractor_ids"]})
     documents = repository.documents_for(connection, contractor_ids)
     contractors = repository.contractors_by_id(connection, contractor_ids)
     policies = repository.all_policies(connection)
+    followup_statuses = followup_repository.latest_status_by_job(
+        connection, [job["id"] for job in jobs], organisation_id
+    )
 
     assessments = []
     for job in jobs:
@@ -113,6 +127,7 @@ def assess_many(connection: Connection, jobs: list[dict]) -> list[Assessment]:
                 contractors=[contractors[cid] for cid in job["contractor_ids"]],
                 status=status,
                 reason=reason,
+                followup_status=followup_statuses.get(job["id"]),
             )
         )
     return assessments
@@ -186,6 +201,7 @@ def get_assessments(
     return assess_many(
         connection,
         repository.jobs_in_window(connection, start, end, principal.organisation_id),
+        principal.organisation_id,
     )
 
 
@@ -198,7 +214,7 @@ def get_assessment(
     job = repository.get_job(connection, job_id, principal.organisation_id)
     if job is None:
         raise HTTPException(status_code=404, detail=f"Job {job_id} not found")
-    return assess_many(connection, [job])[0]
+    return assess_many(connection, [job], principal.organisation_id)[0]
 
 
 @app.get("/assessments/{job_id}/explanation", response_model=ReadinessExplanation)
@@ -294,3 +310,16 @@ def approve_followup_draft(
     if approval is None:
         raise HTTPException(status_code=404, detail=f"Draft {draft_id} not found")
     return followup_repository.get_draft(connection, draft_id, principal.organisation_id)
+
+
+@app.post("/followups/{draft_id}/send", response_model=FollowupDelivery)
+def send_approved_followup(
+    draft_id: int,
+    principal: Principal = Depends(require_manager),
+):
+    from followup_delivery import DeliveryError, send_approved_followup as send
+
+    try:
+        return send(draft_id, principal.organisation_id)
+    except DeliveryError as error:
+        raise HTTPException(status_code=error.status_code, detail=str(error)) from error

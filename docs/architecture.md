@@ -1,6 +1,6 @@
 ﻿# Simple architecture
 
-Status: rules, database, API/browser, and FastAPI-connected LangGraph explanations with tenant-scoped tools are implemented. JOB-102, missing-ID and unknown-job graph paths were manually demonstrated. Approval-gated n8n delivery remains planned.
+Status: rules, database, API/browser, and tenant-scoped LangGraph explanations are implemented. The API has an approval-gated n8n delivery endpoint with a test-only recipient policy and durable attempt ledger; local webhook configuration and end-to-end verification remain.
 
 ## What are we building?
 
