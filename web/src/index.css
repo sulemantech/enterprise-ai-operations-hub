@@ -241,7 +241,7 @@ button.link {
 .table-wrap table {
   border: none;
   border-radius: 0;
-  min-width: 760px;
+  min-width: 900px;
 }
 
 td code {
@@ -273,6 +273,33 @@ td code {
 .badge.needs_review {
   background: var(--review-bg);
   color: var(--review-text);
+}
+
+.followup-status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.followup-status.draft,
+.followup-status.approved,
+.followup-status.sending {
+  background: var(--review-bg);
+  color: var(--review-text);
+}
+
+.followup-status.sent {
+  background: var(--ready-bg);
+  color: var(--ready-text);
+}
+
+.followup-status.delivery_rejected,
+.followup-status.delivery_unknown {
+  background: var(--blocked-bg);
+  color: var(--blocked-text);
 }
 
 @media (max-width: 560px) {

@@ -7,6 +7,7 @@ import {
   fetchReadinessExplanation,
   loginToLocalDemo,
   logout,
+  sendApprovedFollowup,
   saveFollowup,
   type Assessment,
   type FollowupDraft,
@@ -33,6 +34,15 @@ const REASON_LABELS: Record<string, string> = {
   MISSING_DOCUMENT: 'A required document is missing',
   INSUFFICIENT_COVERAGE: 'Insurance coverage is below the policy minimum',
   UNVERIFIED_DOCUMENT: 'A document has not been verified yet',
+}
+
+const FOLLOWUP_STATUS_LABELS: Record<string, string> = {
+  draft: 'Draft',
+  approved: 'Approved',
+  sending: 'Sending',
+  sent: 'Sent to test workflow',
+  delivery_rejected: 'Rejected',
+  delivery_unknown: 'Unknown · reconcile first',
 }
 
 // The only finding the server can draft a follow-up for so far.
@@ -182,6 +192,11 @@ function Results({ assessments }: { assessments: Assessment[] }) {
   const [followupJobId, setFollowupJobId] = useState<string | null>(null)
   const [explanationJobId, setExplanationJobId] = useState<string | null>(null)
   const [explanation, setExplanation] = useState<{ jobId: string; text?: string; error?: string } | null>(null)
+  const [followupStatuses, setFollowupStatuses] = useState<Record<string, string>>({})
+
+  function updateFollowupStatus(jobId: string, status: string) {
+    setFollowupStatuses((current) => ({ ...current, [jobId]: status }))
+  }
 
   async function explainJob(jobId: string) {
     setExplanationJobId(jobId)
@@ -266,14 +281,18 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                 <th>Contractor</th>
                 <th>Status</th>
                 <th>Reason</th>
+                <th>Follow-up</th>
                 <th>
                   <span className="visually-hidden">Actions</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {visible.map((a) => (
-                <Fragment key={a.job_id}>
+              {visible.map((a) => {
+                const followupStatus = followupStatuses[a.job_id] ?? a.followup_status
+                const deliveryUncertain = followupStatus === 'sending' || followupStatus === 'delivery_unknown'
+                return (
+                  <Fragment key={a.job_id}>
                   <tr>
                     <td>
                       <div className="primary">{a.title ?? a.job_id}</div>
@@ -300,6 +319,17 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                       <code>{a.reason}</code>
                     </td>
                     <td>
+                      {followupStatus ? (
+                        <span className={`followup-status ${followupStatus}`}>
+                          {FOLLOWUP_STATUS_LABELS[followupStatus] ?? followupStatus}
+                        </span>
+                      ) : canDraftFollowup(a) ? (
+                        <span className="secondary">Not started</span>
+                      ) : (
+                        <span className="secondary">—</span>
+                      )}
+                    </td>
+                    <td>
                       <button
                         type="button"
                         className="secondary-button"
@@ -312,17 +342,19 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                         <button
                           type="button"
                           className="secondary-button"
+                          disabled={deliveryUncertain}
+                          title={deliveryUncertain ? 'Check the delivery outcome before creating another draft' : undefined}
                           aria-expanded={followupJobId === a.job_id}
                           onClick={() => setFollowupJobId(followupJobId === a.job_id ? null : a.job_id)}
                         >
-                          {followupJobId === a.job_id ? 'Close' : 'Draft follow-up'}
+                          {followupJobId === a.job_id ? 'Close' : followupStatus ? 'New follow-up' : 'Draft follow-up'}
                         </button>
                       )}
                     </td>
                   </tr>
                   {explanation?.jobId === a.job_id && (
                     <tr className="followup-row">
-                      <td colSpan={6}>
+                      <td colSpan={7}>
                         <p className={explanation.error ? 'error' : 'hint'} role="status">
                           {explanation.error ?? explanation.text ?? 'Preparing an evidence-backed explanation…'}
                         </p>
@@ -331,13 +363,14 @@ function Results({ assessments }: { assessments: Assessment[] }) {
                   )}
                   {followupJobId === a.job_id && (
                     <tr className="followup-row">
-                      <td colSpan={6}>
-                        <FollowupPanel jobId={a.job_id} />
+                      <td colSpan={7}>
+                        <FollowupPanel jobId={a.job_id} onStatusChange={updateFollowupStatus} />
                       </td>
                     </tr>
                   )}
-                </Fragment>
-              ))}
+                  </Fragment>
+                )
+              })}
             </tbody>
           </table>
         </div>
@@ -352,7 +385,7 @@ type DraftView =
   | { kind: 'error'; message: string }
   | { kind: 'ready'; draft: FollowupDraft }
 
-function FollowupPanel({ jobId }: { jobId: string }) {
+function FollowupPanel({ jobId, onStatusChange }: { jobId: string; onStatusChange: (jobId: string, status: string) => void }) {
   const [view, setView] = useState<DraftView>({ kind: 'idle' })
   const [subject, setSubject] = useState('')
   const [body, setBody] = useState('')
@@ -363,6 +396,7 @@ function FollowupPanel({ jobId }: { jobId: string }) {
     setView({ kind: 'ready', draft })
     setSubject(draft.subject)
     setBody(draft.body)
+    onStatusChange(jobId, draft.status)
   }
 
   async function prepare() {
@@ -380,6 +414,35 @@ function FollowupPanel({ jobId }: { jobId: string }) {
     try {
       show(await approveFollowup(draft.id))
       setSaveMessage('Approved.')
+    } catch (error) {
+      setSaveMessage((error as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function send(draft: FollowupDraft) {
+    setSaving(true)
+    setSaveMessage(null)
+    try {
+      const outcome = await sendApprovedFollowup(draft.id)
+      const status = outcome.status === 'rejected'
+        ? 'delivery_rejected'
+        : outcome.status === 'unknown'
+          ? 'delivery_unknown'
+          : outcome.status
+      show({ ...draft, status })
+      setSaveMessage(
+        outcome.already_processed
+          ? `This approval was already processed: ${outcome.status}.`
+          : outcome.status === 'sent'
+            ? 'Sent to the configured test workflow.'
+            : outcome.status === 'unknown'
+              ? 'Delivery outcome is unknown. Do not retry; reconcile the n8n execution first.'
+              : outcome.status === 'rejected'
+                ? 'n8n rejected this test delivery.'
+                : 'Delivery request is in progress.',
+      )
     } catch (error) {
       setSaveMessage((error as Error).message)
     } finally {
@@ -428,7 +491,15 @@ function FollowupPanel({ jobId }: { jobId: string }) {
       <p className="notice">
         {draft.status === 'approved'
           ? `Message #${draft.id} · approved, not sent yet. Editing it will need approval again.`
-          : `Draft #${draft.id} · not sent. Approve it before it can be sent.`}
+          : draft.status === 'sent'
+            ? `Message #${draft.id} · sent to the configured test workflow.`
+            : draft.status === 'sending'
+              ? `Message #${draft.id} · delivery is in progress; do not submit it again.`
+              : draft.status === 'delivery_unknown'
+                ? `Message #${draft.id} · delivery outcome unknown; reconcile before any retry.`
+                : draft.status === 'delivery_rejected'
+                  ? `Message #${draft.id} · rejected by the test workflow.`
+                  : `Draft #${draft.id} · not sent. Approve it before it can be sent.`}
       </p>
       <dl>
         <dt>To</dt>
@@ -460,6 +531,16 @@ function FollowupPanel({ jobId }: { jobId: string }) {
             onClick={() => approve(draft)}
           >
             Approve
+          </button>
+        )}
+        {draft.status === 'approved' && (
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={saving}
+            onClick={() => void send(draft)}
+          >
+            {saving ? 'Sending…' : 'Send to test workflow'}
           </button>
         )}
         {saveMessage && <span className="hint" role="status">{saveMessage}</span>}

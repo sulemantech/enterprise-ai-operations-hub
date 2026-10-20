@@ -18,6 +18,7 @@ export interface Assessment {
   contractors: Contractor[]
   status: Status
   reason: string
+  followup_status: string | null
 }
 
 export interface ReadinessExplanation {
@@ -50,6 +51,14 @@ export interface FollowupDraft {
   reason: string
   evidence_ids: string[]
   created_at: string
+}
+
+export interface FollowupDelivery {
+  delivery_id: number
+  draft_id: number
+  approval_id: number
+  status: 'sending' | 'sent' | 'rejected' | 'unknown'
+  already_processed: boolean
 }
 
 export interface CurrentUser {
@@ -149,4 +158,8 @@ export function saveFollowup(id: number, subject: string, body: string): Promise
 // Approves the saved text. Editing afterwards returns it to draft.
 export function approveFollowup(id: number): Promise<FollowupDraft> {
   return request(`/followups/${id}/approve`, { method: 'POST' })
+}
+
+export function sendApprovedFollowup(id: number): Promise<FollowupDelivery> {
+  return request(`/followups/${id}/send`, { method: 'POST' })
 }
