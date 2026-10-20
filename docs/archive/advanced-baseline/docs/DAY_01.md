@@ -8,14 +8,14 @@ The first implementation will be a small deterministic assessment service. Befor
 
 ## 1. Walk through the data (30–45 minutes)
 
-Open [the workflow](WORKFLOW.md) and [the synthetic dataset](../data/demo/readiness.json).
+Open [the workflow](WORKFLOW.md) and [the synthetic dataset](../data/fixtures/readiness.json).
 
 All jobs use the invented policy `DEMO-CONTRACTOR-001`. It requires verified insurance and trade-licence metadata covering the entire job. The insurance threshold is an arbitrary demo setting.
 
 In your IDE PowerShell terminal:
 
 ```powershell
-$demo = Get-Content -Raw -Encoding UTF8 .\data\demo\readiness.json | ConvertFrom-Json
+$demo = Get-Content -Raw -Encoding UTF8 .\data\fixtures\readiness.json | ConvertFrom-Json
 $demo.jobs | Format-Table id, start_date, end_date, contractor_ids
 $demo.documents | Format-Table id, contractor_id, type, review_status, valid_to
 ```

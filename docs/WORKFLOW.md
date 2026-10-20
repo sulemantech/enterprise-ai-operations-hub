@@ -25,7 +25,7 @@ Primary use: a FocusIMS-context operations manager investigating contractor evid
 
 Out of scope now: company-wide ISO verdicts, certification, legal advice, authenticity checks, OCR and full finding registers. The rule function returns one overall status/reason, not all possible gaps. Natural-language dates remain deferred.
 
-Use the fixed fictional dates in [the sample data](../data/demo/readiness.json). No client access or real email account is needed.
+Use the fixed fictional dates in [the sample data](../data/fixtures/readiness.json). No client access or real email account is needed.
 
 ## Demonstration Flow
 

@@ -13,7 +13,7 @@ Help a FocusIMS-context operations manager connect a readiness finding to the ap
 | Structured policy configuration | Required types and minimum insurance amount | Authoritative inputs to Python rules |
 | Future action records | Approved draft and delivery outcome | Tools report what actually happened |
 
-`data/demo/readiness.json` supplies fixtures; `demo_data.py` adds generated operational data. These records are not the RAG corpus. Public FocusIMS/FocusBIS pages provide business context, not an approved customer procedure. Do not ingest source code, `.env` or credentials as knowledge.
+`data/fixtures/readiness.json` supplies fixtures; `demo_data.py` adds generated operational data. These records are not the RAG corpus. Public FocusIMS/FocusBIS pages provide business context, not an approved customer procedure. Do not ingest source code, `.env` or credentials as knowledge.
 
 ## First source and questions
 

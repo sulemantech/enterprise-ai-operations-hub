@@ -11,7 +11,7 @@ An operations readiness assistant for a fictional field-service business: identi
 - [Architecture learning path](docs/LEARNING_PATH.md)
 - [Daily tasks and milestone gates](PROJECT_PLAN.md)
 - [Day 1 guided exercise](docs/DAY_01.md)
-- [Synthetic starting dataset](data/demo/readiness.json)
+- [Synthetic starting dataset](data/fixtures/readiness.json)
 
 ## Current status
 

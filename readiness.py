@@ -96,7 +96,7 @@ def assess_job(job: dict, documents: list[dict], policy: dict) -> tuple[str, str
 
 def load_demo() -> dict:
     """Load the synthetic demo data."""
-    data_path = Path(__file__).parent / "data" / "demo" / "readiness.json"
+    data_path = Path(__file__).parent / "data" / "fixtures" / "readiness.json"
     with data_path.open(encoding="utf-8") as file:
         return json.load(file)
 

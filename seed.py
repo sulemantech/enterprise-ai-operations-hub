@@ -1,6 +1,6 @@
 """Reset PostgreSQL to the synthetic demo data.
 
-Loads the four hand-written jobs from data/demo/readiness.json (the ones the
+Loads the four hand-written jobs from data/fixtures/readiness.json (the ones the
 tests check) plus a larger generated dataset from demo_data.py.
 
     python seed.py            # fixture + generated data

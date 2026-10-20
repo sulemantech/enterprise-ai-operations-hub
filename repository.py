@@ -1,6 +1,6 @@
 """Read readiness records from PostgreSQL.
 
-Records are returned in the same shape as data/demo/readiness.json
+Records are returned in the same shape as data/fixtures/readiness.json
 (dates as ISO strings, jobs with a contractor_ids list), so the rules in
 readiness.py work unchanged whichever source the data comes from.
 """
