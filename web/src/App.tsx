@@ -151,14 +151,20 @@ export default function App() {
 
   return (
     <main>
-      <header>
-        <h1>Contractor readiness</h1>
-        <p className="subtitle">Synthetic demo data · Demo Field Services</p>
-        <p className="subtitle">Signed in as {loginState.user.role}</p>
-        <button type="button" onClick={() => void signOut()}>Sign out</button>
+      <header className="app-header">
+        <div className="brand-block">
+          <p className="eyebrow">CONTRACTOR OPERATIONS</p>
+          <h1>Contractor readiness</h1>
+          <p className="subtitle">A clear view of evidence, risk, and follow-up across your jobs.</p>
+        </div>
+        <div className="header-actions">
+          <span className="workspace-chip">Demo Field Services</span>
+          <span className="role-chip">{loginState.user.role}</span>
+          <button className="secondary-button" type="button" onClick={() => void signOut()}>Sign out</button>
+        </div>
       </header>
 
-      <form onSubmit={checkJobs}>
+      <form className="date-range" onSubmit={checkJobs}>
         <label>
           From
           <input type="date" value={start} onChange={(e) => setStart(e.target.value)} required />
@@ -172,7 +178,7 @@ export default function App() {
         </button>
       </form>
 
-      <section aria-live="polite">
+      <section className="dashboard-section" aria-live="polite">
         {view.kind === 'idle' && <p className="hint">Choose dates and check which jobs are ready.</p>}
         {view.kind === 'loading' && <p className="hint">Checking jobs…</p>}
         {view.kind === 'error' && (
@@ -233,6 +239,13 @@ function Results({ assessments }: { assessments: Assessment[] }) {
 
   return (
     <>
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">OVERVIEW</p>
+          <h2>Readiness overview</h2>
+        </div>
+        <span className="dataset-note">Synthetic records · Updated for selected dates</span>
+      </div>
       <div className="summary">
         {STATUSES.map((status) => (
           <button
