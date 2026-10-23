@@ -7,6 +7,7 @@ the same answer from the same function.
 import logging
 import os
 from datetime import date, datetime
+from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel, Field
@@ -97,6 +98,11 @@ class FollowupDraft(BaseModel):
 class FollowupEdit(BaseModel):
     subject: str = Field(min_length=1, max_length=200)
     body: str = Field(min_length=1, max_length=5000)
+
+
+class FollowupReconciliation(BaseModel):
+    outcome: Literal["sent", "not_sent"]
+    note: str = Field(min_length=8, max_length=500)
 
 
 def assess_many(
@@ -323,3 +329,44 @@ def send_approved_followup(
         return send(draft_id, principal.organisation_id)
     except DeliveryError as error:
         raise HTTPException(status_code=error.status_code, detail=str(error)) from error
+
+
+@app.post("/followups/{draft_id}/reconcile", response_model=FollowupDelivery)
+def reconcile_followup_delivery(
+    draft_id: int,
+    reconciliation: FollowupReconciliation,
+    principal: Principal = Depends(require_manager),
+    connection: Connection = Depends(get_transaction),
+):
+    """Record a manager's manual verification of an unknown n8n outcome."""
+    note = reconciliation.note.strip()
+    if len(note) < 8:
+        raise HTTPException(
+            status_code=422,
+            detail="Reconciliation note must contain at least 8 non-whitespace characters",
+        )
+    delivery = followup_repository.reconcile_delivery(
+        connection,
+        draft_id,
+        principal.organisation_id,
+        reconciliation.outcome,
+        f"{principal.issuer}|{principal.subject}",
+        note,
+    )
+    if delivery is None:
+        draft = followup_repository.get_draft(
+            connection, draft_id, principal.organisation_id
+        )
+        if draft is None:
+            raise HTTPException(status_code=404, detail=f"Draft {draft_id} not found")
+        raise HTTPException(
+            status_code=409,
+            detail="Only an unknown delivery can be reconciled",
+        )
+    return {
+        "delivery_id": delivery["id"],
+        "draft_id": delivery["draft_id"],
+        "approval_id": delivery["approval_id"],
+        "status": delivery["status"],
+        "already_processed": False,
+    }

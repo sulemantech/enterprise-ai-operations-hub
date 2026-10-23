@@ -70,11 +70,12 @@ The separate graph CLI is available with `python readiness_graph.py "Why is JOB-
 
 ## Delivery Roadmap
 
-1. **Operational recovery:** add an operator reconciliation flow for unknown n8n delivery outcomes before any retry.
-2. **Security hardening:** complete CSRF protection, verify organisation scoping across every data path, review session/cookie settings, and add audited user provisioning.
-3. **Reliability and evaluation:** test duplicate and partial-failure scenarios, measure explanation accuracy/citation support, and add monitoring and recovery procedures.
-4. **Stakeholder validation:** confirm the target workflow, authoritative evidence fields, procedure ownership, and integration permissions with the relevant business stakeholders.
-5. **Deployment readiness:** only after the previous gates, define a supported hosting, backup, release, and incident-response model.
+1. **Security hardening:** complete CSRF protection, verify organisation scoping across every data path, review session/cookie settings, and add audited user provisioning.
+2. **Reliability and evaluation:** test duplicate and partial-failure scenarios, measure explanation accuracy/citation support, and add monitoring and recovery procedures.
+3. **Stakeholder validation:** confirm the target workflow, authoritative evidence fields, procedure ownership, and integration permissions with the relevant business stakeholders.
+4. **Deployment readiness:** only after the previous gates, define a supported hosting, backup, release, and incident-response model.
+
+Manual operator reconciliation is implemented for unknown n8n outcomes. Automated execution lookup and operational alerts remain future work.
 
 For the current implementation state and acceptance criteria, see the [delivery plan](PROJECT_PLAN.md). Authentication and integration details are documented in [Hellō setup](docs/authentication.md) and [follow-up delivery](docs/followup-delivery.md).
 

@@ -57,7 +57,7 @@ export interface FollowupDelivery {
   delivery_id: number
   draft_id: number
   approval_id: number
-  status: 'sending' | 'sent' | 'rejected' | 'unknown'
+  status: 'sending' | 'sent' | 'rejected' | 'unknown' | 'confirmed_not_sent'
   already_processed: boolean
 }
 
@@ -162,4 +162,15 @@ export function approveFollowup(id: number): Promise<FollowupDraft> {
 
 export function sendApprovedFollowup(id: number): Promise<FollowupDelivery> {
   return request(`/followups/${id}/send`, { method: 'POST' })
+}
+
+export function reconcileFollowupDelivery(
+  id: number,
+  outcome: 'sent' | 'not_sent',
+  note: string,
+): Promise<FollowupDelivery> {
+  return request(`/followups/${id}/reconcile`, {
+    method: 'POST',
+    body: JSON.stringify({ outcome, note }),
+  })
 }

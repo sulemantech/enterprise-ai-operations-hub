@@ -7,6 +7,7 @@ import {
   fetchReadinessExplanation,
   loginToLocalDemo,
   logout,
+  reconcileFollowupDelivery,
   sendApprovedFollowup,
   saveFollowup,
   type Assessment,
@@ -41,6 +42,7 @@ const FOLLOWUP_STATUS_LABELS: Record<string, string> = {
   approved: 'Approved',
   sending: 'Sending',
   sent: 'Sent to test workflow',
+  delivery_not_sent: 'Confirmed not sent',
   delivery_rejected: 'Rejected',
   delivery_unknown: 'Unknown · reconcile first',
 }
@@ -404,6 +406,7 @@ function FollowupPanel({ jobId, onStatusChange }: { jobId: string; onStatusChang
   const [body, setBody] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveMessage, setSaveMessage] = useState<string | null>(null)
+  const [reconciliationNote, setReconciliationNote] = useState('')
 
   function show(draft: FollowupDraft) {
     setView({ kind: 'ready', draft })
@@ -455,6 +458,26 @@ function FollowupPanel({ jobId, onStatusChange }: { jobId: string; onStatusChang
               : outcome.status === 'rejected'
                 ? 'n8n rejected this test delivery.'
                 : 'Delivery request is in progress.',
+      )
+    } catch (error) {
+      setSaveMessage((error as Error).message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function reconcile(draft: FollowupDraft, outcome: 'sent' | 'not_sent') {
+    setSaving(true)
+    setSaveMessage(null)
+    try {
+      await reconcileFollowupDelivery(draft.id, outcome, reconciliationNote.trim())
+      show({ ...draft, status: outcome === 'sent' ? 'sent' : 'draft' })
+      if (outcome === 'not_sent') onStatusChange(jobId, 'delivery_not_sent')
+      setReconciliationNote('')
+      setSaveMessage(
+        outcome === 'sent'
+          ? 'Recorded as sent after checking the n8n execution.'
+          : 'Recorded as not sent. Review the draft and approve it again before another attempt.',
       )
     } catch (error) {
       setSaveMessage((error as Error).message)
@@ -530,6 +553,44 @@ function FollowupPanel({ jobId, onStatusChange }: { jobId: string; onStatusChang
         Message
         <textarea value={body} onChange={(e) => setBody(e.target.value)} required maxLength={5000} rows={12} />
       </label>
+      {draft.status === 'delivery_unknown' && (
+        <div className="reconciliation-panel">
+          <p className="hint">
+            First inspect the n8n execution and Mailpit. Record the execution ID and what you verified; do not mark
+            an uncertain outcome as not sent without checking.
+          </p>
+          <label>
+            Reconciliation note
+            <textarea
+              value={reconciliationNote}
+              onChange={(e) => setReconciliationNote(e.target.value)}
+              required
+              minLength={8}
+              maxLength={500}
+              rows={3}
+              placeholder="For example: Execution 13 succeeded; email visible in Mailpit."
+            />
+          </label>
+          <div className="followup-actions">
+            <button
+              type="button"
+              className="secondary-button"
+              disabled={saving || reconciliationNote.trim().length < 8}
+              onClick={() => void reconcile(draft, 'sent')}
+            >
+              Confirm sent
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              disabled={saving || reconciliationNote.trim().length < 8}
+              onClick={() => void reconcile(draft, 'not_sent')}
+            >
+              Confirm not sent
+            </button>
+          </div>
+        </div>
+      )}
       <div className="followup-actions">
         <button type="submit" disabled={saving || !changed}>
           {saving ? 'Saving…' : 'Save draft'}

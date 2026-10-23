@@ -23,15 +23,15 @@ This plan tracks product capability and evidence of readiness. The repository cu
 | Operational dashboard | Let a manager review jobs by date, search/filter, and inspect explanations | Browser calls authenticated FastAPI endpoints and displays loading, empty, and error states | Implemented |
 | Procedure-grounded explanation | Explain a finding without changing the deterministic result | Retrieved policy passages are version-scoped and returned citations are validated | Implemented; broader evaluation pending |
 | Approved follow-up | Prepare, edit, approve, dispatch, and display test delivery state | Exact-text approval enforced; authenticated n8n delivery recorded; test email appears in Mailpit | Locally exercised |
-| Delivery reconciliation | Give an operator a safe way to resolve an uncertain outcome | An unknown delivery can be reconciled against the workflow before a retry is allowed | Not implemented |
+| Delivery reconciliation | Give an operator a safe way to resolve an uncertain outcome | A manager records a verified outcome and evidence note; a confirmed non-delivery requires a fresh approval before another attempt | Manual workflow implemented; automated lookup pending |
 | Production security and operations | Establish complete identity, tenant boundaries, audit, recovery, and deployment controls | Security review and operational acceptance criteria pass | Not ready |
 | Client validation | Verify the workflow and integration fit with authorised stakeholders | Confirmed user task, authoritative records/procedure, access approval, and measurable evaluation criteria | Not started |
 
 ## Priority Work
 
-### 1. Resolve uncertain deliveries safely
+### 1. Automate delivery recovery
 
-Add an operator-only reconciliation process for `delivery_unknown` records. It must identify the corresponding n8n execution, capture the outcome and evidence, prevent accidental duplicate sends, and expose the resolution in the dashboard. A retry must remain unavailable until reconciliation establishes that no message was sent.
+For `delivery_unknown` records, the dashboard now requires a manager to record an outcome and evidence note after checking n8n and Mailpit. A confirmed non-delivery returns the text to draft status, requiring review and fresh approval before another attempt. Automated n8n execution lookup and alerting remain future work.
 
 ### 2. Complete security controls
 

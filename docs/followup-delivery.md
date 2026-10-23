@@ -4,7 +4,7 @@
 
 The **Send to test workflow** action calls FastAPI, not n8n directly. FastAPI checks the manager session, verifies the exact approved text, and allows only `@example.invalid` recipients. It then sends the approved recipient, subject, body, draft ID, and approval ID to n8n's header-authenticated `POST /followup-send` webhook.
 
-Before the network request, FastAPI records one delivery attempt per approval and marks the draft as sending. Repeated requests for that approval return the saved outcome instead of calling n8n again. A timeout or unexpected response is recorded as `unknown`; do not retry an unknown attempt until the n8n execution has been checked. This prevents duplicate requests but does not yet automate reconciliation.
+Before the network request, FastAPI records one delivery attempt per approval and marks the draft as sending. Repeated requests for that approval return the saved outcome instead of calling n8n again. A timeout or unexpected response is recorded as `unknown`; do not retry an unknown attempt until the n8n execution has been checked. A manager can record a verified outcome with an execution reference and note. A confirmed non-delivery returns the draft to review; it must be approved again to create a new delivery attempt. Reconciliation is a human attestation, not an automated check of n8n.
 
 `sent` means the n8n workflow's email node returned successfully. It does not prove that a person received or read the email. The `.invalid` recipient domain is intentionally reserved and cannot receive real email; use a local capture inbox such as Mailpit for workflow testing, not production SMTP.
 
@@ -28,6 +28,7 @@ The URL and token are optional. Without them, the API responds with `503` before
 | `sending` | An attempt was claimed; request may be underway | Wait/check n8n execution; do not submit again |
 | `sent` | n8n confirmed the matching draft and approval IDs | Review the n8n execution and capture-inbox message |
 | `rejected` | n8n returned its explicit test-recipient rejection | Fix the test workflow/configuration before a new approval |
-| `unknown` | Timeout, server error, or unexpected response; n8n may have acted | Reconcile the n8n execution manually; do not retry |
+| `unknown` | Timeout, server error, or unexpected response; n8n may have acted | Check n8n execution and Mailpit; record a manager reconciliation note |
+| `confirmed_not_sent` | A manager verified that the workflow did not send the message | Review the draft and approve it again before a new attempt |
 
-This is a local prototype integration, not production delivery infrastructure. Automated reconciliation, operational alerts, CSRF protection, and a security review remain outstanding.
+This is a local prototype integration, not production delivery infrastructure. Reconciliation is manual; automated n8n execution lookup, operational alerts, CSRF protection, and a security review remain outstanding.

@@ -59,11 +59,34 @@ def latest_status_by_job(
 
     rows = connection.execute(
         text("""
-            SELECT DISTINCT ON (job_id) job_id, status
-            FROM followup_drafts
-            WHERE organisation_id = :organisation_id
-              AND job_id IN :job_ids
-            ORDER BY job_id, created_at DESC, id DESC
+            SELECT DISTINCT ON (draft.job_id)
+                draft.job_id,
+                CASE
+                    WHEN draft.status = 'draft' AND EXISTS (
+                        SELECT 1
+                        FROM followup_approvals approval
+                        JOIN followup_deliveries delivery
+                          ON delivery.approval_id = approval.id
+                         AND delivery.organisation_id = approval.organisation_id
+                        WHERE approval.draft_id = draft.id
+                          AND approval.organisation_id = draft.organisation_id
+                          AND approval.id = (
+                              SELECT latest_approval.id
+                              FROM followup_approvals latest_approval
+                              WHERE latest_approval.draft_id = draft.id
+                                AND latest_approval.organisation_id = draft.organisation_id
+                              ORDER BY latest_approval.approved_at DESC,
+                                       latest_approval.id DESC
+                              LIMIT 1
+                          )
+                          AND delivery.status = 'confirmed_not_sent'
+                    ) THEN 'delivery_not_sent'
+                    ELSE draft.status
+                END AS status
+            FROM followup_drafts draft
+            WHERE draft.organisation_id = :organisation_id
+              AND draft.job_id IN :job_ids
+            ORDER BY draft.job_id, draft.created_at DESC, draft.id DESC
         """).bindparams(bindparam("job_ids", expanding=True)),
         {"organisation_id": organisation_id, "job_ids": job_ids},
     ).mappings().all()
@@ -215,6 +238,60 @@ def get_delivery(connection: Connection, approval_id: int,
         {"approval_id": approval_id, "organisation_id": organisation_id},
     ).mappings().first()
     return dict(row) if row is not None else None
+
+
+def reconcile_delivery(
+    connection: Connection,
+    draft_id: int,
+    organisation_id: str,
+    outcome: str,
+    reconciled_by: str,
+    note: str,
+) -> dict | None:
+    """Record an operator-verified outcome for one unknown delivery."""
+    status = "sent" if outcome == "sent" else "confirmed_not_sent"
+    row = connection.execute(
+        text("""
+            UPDATE followup_deliveries
+            SET status = :status,
+                reconciled_by = :reconciled_by,
+                reconciled_at = now(),
+                reconciliation_note = :note,
+                updated_at = now()
+            WHERE draft_id = :draft_id
+              AND organisation_id = :organisation_id
+              AND status = 'unknown'
+            RETURNING *
+        """),
+        {
+            "status": status,
+            "reconciled_by": reconciled_by,
+            "note": note,
+            "draft_id": draft_id,
+            "organisation_id": organisation_id,
+        },
+    ).mappings().first()
+    if row is None:
+        return None
+
+    draft_status = "sent" if outcome == "sent" else "draft"
+    draft_update = connection.execute(
+        text("""
+            UPDATE followup_drafts
+            SET status = :status
+            WHERE id = :draft_id
+              AND organisation_id = :organisation_id
+              AND status = 'delivery_unknown'
+        """),
+        {
+            "status": draft_status,
+            "draft_id": draft_id,
+            "organisation_id": organisation_id,
+        },
+    )
+    if draft_update.rowcount != 1:
+        raise RuntimeError("Draft status changed while reconciling delivery")
+    return dict(row)
 
 
 def complete_delivery(connection: Connection, delivery_id: int, draft_id: int,

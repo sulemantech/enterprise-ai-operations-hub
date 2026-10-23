@@ -142,7 +142,7 @@ td code { display: block; margin-top: 5px; color: #8490a3; font-size: .7rem; ove
 .badge, .followup-status { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: .78rem; font-weight: 700; white-space: nowrap; }
 .badge.ready, .followup-status.sent { background: var(--ready-bg); color: var(--ready-text); }
 .badge.blocked, .followup-status.delivery_rejected, .followup-status.delivery_unknown { background: var(--blocked-bg); color: var(--blocked-text); }
-.badge.needs_review, .followup-status.draft, .followup-status.approved, .followup-status.sending { background: var(--review-bg); color: var(--review-text); }
+.badge.needs_review, .followup-status.draft, .followup-status.approved, .followup-status.sending, .followup-status.delivery_not_sent { background: var(--review-bg); color: var(--review-text); }
 td > .secondary-button + .secondary-button { margin-top: 6px; }
 .followup-row > td { background: #f8f9fc; }
 .followup {
@@ -165,6 +165,7 @@ td > .secondary-button + .secondary-button { margin-top: 6px; }
 .followup dd { margin: 0; overflow-wrap: anywhere; }
 .followup textarea { resize: vertical; }
 .followup-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.reconciliation-panel { display: grid; gap: 10px; width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: #f8f9fc; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 760px) {

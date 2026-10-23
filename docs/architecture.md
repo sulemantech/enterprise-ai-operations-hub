@@ -1,6 +1,6 @@
 ﻿# Application Architecture
 
-Status: readiness rules, PostgreSQL persistence, API/browser assessments, tenant-scoped LangGraph explanations, and approval-gated n8n test delivery are implemented. Security hardening, automated delivery reconciliation, and production operations remain open.
+Status: readiness rules, PostgreSQL persistence, API/browser assessments, tenant-scoped LangGraph explanations, approval-gated n8n test delivery, and manual operator reconciliation are implemented. Security hardening, automated delivery lookup, and production operations remain open.
 
 ## Product Context
 
@@ -22,4 +22,4 @@ The graph's prompts do not guarantee factual accuracy. The current assessment re
 
 See [knowledge sources and context](knowledge/README.md), [question scope](WORKFLOW.md), [authentication configuration](authentication.md), and [test delivery setup](followup-delivery.md).
 
-The deterministic readiness result remains authoritative; AI explains findings but cannot change a rule result or approve a follow-up. Approval is bound to the exact recipient, subject, and message text. Uncertain delivery is recorded and must be reconciled before another send.
+The deterministic readiness result remains authoritative; AI explains findings but cannot change a rule result or approve a follow-up. Approval is bound to the exact recipient, subject, and message text. Uncertain delivery is recorded and a manager must document the manually verified outcome before another send.

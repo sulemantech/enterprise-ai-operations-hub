@@ -258,3 +258,49 @@ def test_timeout_is_recorded_unknown_and_not_reported_as_success(monkeypatch):
     assert result["status"] == "unknown"
     assert completions[0][0] == "unknown"
     assert completions[0][3] == "TimeoutException"
+
+
+def test_reconciliation_endpoint_records_manager_attestation(client, monkeypatch):
+    calls = []
+
+    def reconcile(*args):
+        calls.append(args)
+        return {
+            "id": 9,
+            "draft_id": 19,
+            "approval_id": 31,
+            "status": "confirmed_not_sent",
+        }
+
+    monkeypatch.setattr(
+        followup_delivery.followup_repository, "reconcile_delivery", reconcile
+    )
+    response = client.post(
+        "/followups/19/reconcile",
+        json={"outcome": "not_sent", "note": "Execution 13: no send node ran."},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "confirmed_not_sent"
+    assert calls[0][1:4] == (19, "ORG-DEMO", "not_sent")
+    assert calls[0][4] == "https://identity.example.test/|test-manager"
+
+
+def test_reconciliation_rejects_non_unknown_delivery(client, monkeypatch):
+    monkeypatch.setattr(
+        followup_delivery.followup_repository,
+        "reconcile_delivery",
+        lambda *_args: None,
+    )
+    monkeypatch.setattr(
+        followup_delivery.followup_repository,
+        "get_draft",
+        lambda *_args: {"id": 19},
+    )
+
+    response = client.post(
+        "/followups/19/reconcile",
+        json={"outcome": "sent", "note": "Execution 13 completed."},
+    )
+
+    assert response.status_code == 409
